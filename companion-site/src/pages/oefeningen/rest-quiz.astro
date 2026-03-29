@@ -1,0 +1,161 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import questions from '../../data/quiz-questions.json';
+---
+
+<BaseLayout title="REST Quiz" breadcrumbs={[{ label: "Oefeningen", href: "/" }, { label: "REST Quiz" }]}>
+  <header class="mb-10">
+    <h1 class="mb-3">REST Principes Quiz</h1>
+    <p class="text-[var(--color-text-secondary)] max-w-xl">
+      Lees het scenario en bepaal welk REST-principe wordt toegepast of geschonden.
+    </p>
+  </header>
+
+  <div id="quiz" data-questions={JSON.stringify(questions)}>
+    <!-- Progress -->
+    <div class="flex items-baseline justify-between mb-10">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        Vraag <span id="current" class="text-[var(--color-text-primary)] font-medium">1</span> van <span id="total"></span>
+      </p>
+      <p class="text-sm" style="font-family: var(--font-display);">
+        <span id="score" class="text-2xl font-light text-[var(--color-text-primary)]">0</span>
+        <span class="text-[var(--color-text-secondary)]"> / </span>
+        <span id="attempted" class="text-[var(--color-text-secondary)]">0</span>
+      </p>
+    </div>
+
+    <!-- Question -->
+    <div id="question-area">
+      <blockquote id="scenario" class="text-lg italic leading-relaxed mb-4 max-w-2xl" style="color: var(--color-text-primary);"></blockquote>
+      <p id="question-text" class="font-medium text-sm mb-6 text-[var(--color-text-secondary)]"></p>
+
+      <!-- Options -->
+      <div id="options" class="space-y-3 max-w-lg mb-8"></div>
+
+      <!-- Feedback -->
+      <div id="feedback" class="hidden mb-8 py-4">
+        <p id="feedback-result" class="font-medium text-sm mb-2"></p>
+        <p id="feedback-explanation" class="text-sm text-[var(--color-text-secondary)] leading-relaxed"></p>
+      </div>
+
+      <!-- Next -->
+      <button id="next-btn" class="hidden px-5 py-2.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+        Volgende →
+      </button>
+    </div>
+
+    <!-- End screen -->
+    <div id="end-screen" class="hidden text-center py-16">
+      <p class="text-6xl font-light mb-2" style="font-family: var(--font-display);" id="final-score"></p>
+      <p class="text-[var(--color-text-secondary)] mb-2">vragen correct beantwoord</p>
+      <p id="final-pct" class="text-sm text-[var(--color-text-secondary)] mb-8"></p>
+      <button id="restart-btn" class="px-5 py-2.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+        Opnieuw proberen
+      </button>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const quiz = document.getElementById('quiz')!;
+  const allQuestions = JSON.parse(quiz.dataset.questions || '[]');
+
+  let shuffled: typeof allQuestions = [];
+  let index = 0;
+  let score = 0;
+  let attempted = 0;
+  let answered = false;
+
+  const $ = (id: string) => document.getElementById(id)!;
+
+  function shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function start() {
+    shuffled = shuffle(allQuestions);
+    index = 0; score = 0; attempted = 0;
+    $('total').textContent = String(shuffled.length);
+    $('end-screen').classList.add('hidden');
+    $('question-area').classList.remove('hidden');
+    render();
+  }
+
+  function render() {
+    if (index >= shuffled.length) { showEnd(); return; }
+    answered = false;
+    const q = shuffled[index];
+
+    $('current').textContent = String(index + 1);
+    $('score').textContent = String(score);
+    $('attempted').textContent = String(attempted);
+    $('scenario').textContent = q.scenario;
+    $('question-text').textContent = q.question;
+
+    const $options = $('options');
+    $options.innerHTML = '';
+    q.options.forEach((opt: string, i: number) => {
+      const btn = document.createElement('button');
+      btn.className = 'w-full text-left px-5 py-3.5 rounded-lg border border-[var(--color-border)] text-sm transition-all duration-300 hover:border-[var(--color-accent-ochre)] hover:bg-[var(--color-bg-secondary)] cursor-pointer';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => choose(i));
+      $options.appendChild(btn);
+    });
+
+    $('feedback').classList.add('hidden');
+    $('next-btn').classList.add('hidden');
+  }
+
+  function choose(i: number) {
+    if (answered) return;
+    answered = true;
+    attempted++;
+
+    const q = shuffled[index];
+    const correct = i === q.correctIndex;
+    if (correct) score++;
+
+    const buttons = $('options').querySelectorAll('button');
+    buttons.forEach((btn, idx) => {
+      const b = btn as HTMLButtonElement;
+      b.disabled = true;
+      b.style.cursor = 'default';
+      if (idx === q.correctIndex) {
+        b.style.borderColor = 'var(--color-accent-sage)';
+        b.style.background = 'color-mix(in oklch, var(--color-accent-sage) 8%, transparent)';
+      } else if (idx === i && !correct) {
+        b.style.borderColor = 'var(--color-accent-rust)';
+        b.style.background = 'color-mix(in oklch, var(--color-accent-rust) 8%, transparent)';
+      } else {
+        b.style.opacity = '0.4';
+      }
+    });
+
+    const $fb = $('feedback');
+    $('feedback-result').textContent = correct ? 'Correct!' : 'Niet juist';
+    ($('feedback-result') as HTMLElement).style.color = correct ? 'var(--color-accent-sage)' : 'var(--color-accent-rust)';
+    $fb.className = correct ? 'feedback-correct mb-8' : 'feedback-incorrect mb-8';
+    $('feedback-explanation').textContent = q.explanation;
+
+    $('score').textContent = String(score);
+    $('attempted').textContent = String(attempted);
+    $('next-btn').classList.remove('hidden');
+  }
+
+  function showEnd() {
+    $('question-area').classList.add('hidden');
+    const pct = Math.round((score / shuffled.length) * 100);
+    $('final-score').textContent = `${score} / ${shuffled.length}`;
+    $('final-pct').textContent = `${pct}% correct`;
+    $('end-screen').classList.remove('hidden');
+  }
+
+  $('next-btn').addEventListener('click', () => { index++; render(); });
+  $('restart-btn').addEventListener('click', start);
+  start();
+</script>

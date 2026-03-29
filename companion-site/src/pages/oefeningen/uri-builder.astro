@@ -1,0 +1,259 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import challenges from '../../data/uri-challenges.json';
+---
+
+<BaseLayout title="URI Builder" breadcrumbs={[{ label: "Oefeningen", href: "/" }, { label: "URI Builder" }]}>
+  <header class="mb-10">
+    <h1 class="mb-3">URI Builder</h1>
+    <p class="text-[var(--color-text-secondary)] max-w-xl">
+      Lees het scenario en typ de juiste RESTful URI. Gebruik hints als je vastloopt.
+    </p>
+  </header>
+
+  <div id="builder" data-challenges={JSON.stringify(challenges)}>
+    <!-- Progress & Score -->
+    <div class="flex items-baseline justify-between mb-8">
+      <div class="flex items-center gap-4">
+        <p class="text-sm text-[var(--color-text-secondary)]">
+          <span id="current">1</span> / <span id="total"></span>
+        </p>
+        <span id="difficulty-badge" class="text-xs px-2 py-0.5 rounded"></span>
+      </div>
+      <p class="text-sm" style="font-family: var(--font-display);">
+        <span id="score" class="text-2xl font-light">0</span>
+        <span class="text-[var(--color-text-secondary)]"> / </span>
+        <span id="attempted" class="text-[var(--color-text-secondary)]">0</span>
+      </p>
+    </div>
+
+    <!-- Challenge area -->
+    <div id="challenge-area">
+      <!-- Scenario -->
+      <div class="mb-8">
+        <p id="scenario" class="text-lg leading-relaxed max-w-2xl"></p>
+      </div>
+
+      <!-- URI Input -->
+      <div class="mb-6">
+        <div class="specimen rounded-lg flex items-center gap-0">
+          <span class="text-[var(--color-accent-ochre)] font-semibold select-none shrink-0" style="font-family: var(--font-code);">GET&nbsp;</span>
+          <input
+            type="text"
+            id="uri-input"
+            placeholder="/..."
+            autocomplete="off"
+            spellcheck="false"
+            class="flex-1 bg-transparent border-none outline-none text-[#F7F3EE] placeholder:text-[#6B6560]"
+            style="font-family: var(--font-code); font-size: 0.95em;"
+          />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3 mb-6">
+        <button id="check-btn" class="px-5 py-2.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+          Controleer
+        </button>
+        <button id="hint-btn" class="px-5 py-2.5 border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text-secondary)] hover:border-[var(--color-accent-ochre)] hover:text-[var(--color-accent-ochre)] transition-colors cursor-pointer">
+          Hint <span id="hint-count" class="text-xs opacity-60"></span>
+        </button>
+      </div>
+
+      <!-- Hints -->
+      <div id="hints-area" class="mb-6 space-y-2"></div>
+
+      <!-- Feedback -->
+      <div id="feedback" class="hidden mb-6 py-4">
+        <p id="feedback-result" class="font-medium text-sm mb-1"></p>
+        <p id="feedback-rule" class="text-sm mb-1" style="font-family: var(--font-display); color: var(--color-text-secondary);"></p>
+        <p id="feedback-explanation" class="text-sm text-[var(--color-text-secondary)] italic"></p>
+        <div id="correct-answer" class="hidden mt-3">
+          <p class="text-xs text-[var(--color-text-secondary)] mb-1">Correct antwoord:</p>
+          <div class="specimen inline-block rounded px-3 py-1.5 text-xs">
+            <code id="correct-uri"></code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next -->
+      <button id="next-btn" class="hidden px-5 py-2.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+        Volgende →
+      </button>
+    </div>
+
+    <!-- End screen -->
+    <div id="end-screen" class="hidden text-center py-16">
+      <p class="text-6xl font-light mb-2" style="font-family: var(--font-display);" id="final-score"></p>
+      <p class="text-[var(--color-text-secondary)] mb-8">URI's correct gebouwd</p>
+      <button id="restart-btn" class="px-5 py-2.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+        Opnieuw beginnen
+      </button>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const builder = document.getElementById('builder')!;
+  const allChallenges = JSON.parse(builder.dataset.challenges || '[]');
+
+  let challenges: typeof allChallenges = [];
+  let index = 0;
+  let score = 0;
+  let attempted = 0;
+  let hintIndex = 0;
+  let answered = false;
+
+  const $ = (id: string) => document.getElementById(id)!;
+  const $input = $('uri-input') as HTMLInputElement;
+
+  function shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function normalizeUri(uri: string): string {
+    let u = uri.trim().toLowerCase();
+    // Ensure starts with /
+    if (!u.startsWith('/')) u = '/' + u;
+    // Remove trailing slash (except root)
+    if (u.length > 1 && u.endsWith('/')) u = u.slice(0, -1);
+    // Sort query params
+    const qIndex = u.indexOf('?');
+    if (qIndex !== -1) {
+      const path = u.slice(0, qIndex);
+      const params = u.slice(qIndex + 1).split('&').sort().join('&');
+      u = path + '?' + params;
+    }
+    return u;
+  }
+
+  function checkAnswer(input: string, challenge: any): boolean {
+    const normalized = normalizeUri(input);
+    if (normalized === normalizeUri(challenge.correctUri)) return true;
+    if (challenge.acceptAlternatives) {
+      return challenge.acceptAlternatives.some((alt: string) => normalized === normalizeUri(alt));
+    }
+    return false;
+  }
+
+  const difficultyColors: Record<string, { bg: string; text: string }> = {
+    beginner: { bg: 'color-mix(in oklch, var(--color-accent-sage) 15%, transparent)', text: 'var(--color-accent-sage)' },
+    intermediate: { bg: 'color-mix(in oklch, var(--color-accent-ochre) 15%, transparent)', text: 'var(--color-accent-ochre)' },
+    advanced: { bg: 'color-mix(in oklch, var(--color-accent-rust) 15%, transparent)', text: 'var(--color-accent-rust)' },
+  };
+
+  const difficultyLabels: Record<string, string> = {
+    beginner: 'Beginner',
+    intermediate: 'Gemiddeld',
+    advanced: 'Gevorderd',
+  };
+
+  function start() {
+    challenges = shuffle(allChallenges);
+    index = 0; score = 0; attempted = 0;
+    $('total').textContent = String(challenges.length);
+    $('end-screen').classList.add('hidden');
+    $('challenge-area').classList.remove('hidden');
+    render();
+  }
+
+  function render() {
+    if (index >= challenges.length) { showEnd(); return; }
+    answered = false;
+    hintIndex = 0;
+    const c = challenges[index];
+
+    $('current').textContent = String(index + 1);
+    $('score').textContent = String(score);
+    $('attempted').textContent = String(attempted);
+    $('scenario').textContent = c.scenario;
+
+    const badge = $('difficulty-badge');
+    const dc = difficultyColors[c.difficulty] || difficultyColors.beginner;
+    badge.textContent = difficultyLabels[c.difficulty] || c.difficulty;
+    badge.style.background = dc.bg;
+    badge.style.color = dc.text;
+
+    $('hint-count').textContent = `(${c.hints.length})`;
+    $('hints-area').innerHTML = '';
+    $input.value = '';
+    $input.disabled = false;
+    $input.focus();
+
+    $('feedback').classList.add('hidden');
+    $('correct-answer').classList.add('hidden');
+    $('next-btn').classList.add('hidden');
+    $('check-btn').classList.remove('hidden');
+    $('hint-btn').classList.remove('hidden');
+  }
+
+  function check() {
+    if (answered) return;
+    const value = $input.value.trim();
+    if (!value) { $input.focus(); return; }
+
+    answered = true;
+    attempted++;
+    const c = challenges[index];
+    const correct = checkAnswer(value, c);
+    if (correct) score++;
+
+    $input.disabled = true;
+    $('check-btn').classList.add('hidden');
+    $('hint-btn').classList.add('hidden');
+
+    const $fb = $('feedback');
+    $('feedback-result').textContent = correct ? 'Correct!' : 'Niet juist';
+    $('feedback-result').style.color = correct ? 'var(--color-accent-sage)' : 'var(--color-accent-rust)';
+    $fb.className = correct ? 'feedback-correct mb-6' : 'feedback-incorrect mb-6';
+    $('feedback-rule').textContent = c.rule;
+    $('feedback-explanation').textContent = c.explanation;
+
+    if (!correct) {
+      $('correct-uri').textContent = c.correctUri;
+      $('correct-answer').classList.remove('hidden');
+    }
+
+    $('score').textContent = String(score);
+    $('attempted').textContent = String(attempted);
+    $('next-btn').classList.remove('hidden');
+  }
+
+  function showHint() {
+    if (answered) return;
+    const c = challenges[index];
+    if (hintIndex >= c.hints.length) return;
+
+    const hint = document.createElement('p');
+    hint.className = 'text-sm italic';
+    hint.style.color = 'var(--color-accent-ochre)';
+    hint.textContent = `💡 ${c.hints[hintIndex]}`;
+    hint.style.animation = 'slideIn 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+    $('hints-area').appendChild(hint);
+    hintIndex++;
+
+    if (hintIndex >= c.hints.length) {
+      ($('hint-btn') as HTMLButtonElement).disabled = true;
+      $('hint-btn').style.opacity = '0.4';
+    }
+  }
+
+  function showEnd() {
+    $('challenge-area').classList.add('hidden');
+    $('final-score').textContent = `${score} / ${challenges.length}`;
+    $('end-screen').classList.remove('hidden');
+  }
+
+  $('check-btn').addEventListener('click', check);
+  $('hint-btn').addEventListener('click', showHint);
+  $('next-btn').addEventListener('click', () => { index++; render(); });
+  $('restart-btn').addEventListener('click', start);
+  $input.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+
+  start();
+</script>

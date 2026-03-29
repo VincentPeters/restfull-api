@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "good": "/games",
+    "bad": "/getGames",
+    "rule": "Gebruik zelfstandige naamwoorden, geen werkwoorden",
+    "explanation": "URI's bevatten nooit werkwoorden. De HTTP-methode (GET) bepaalt de actie."
+  },
+  {
+    "id": 2,
+    "good": "/games",
+    "bad": "/game",
+    "rule": "Gebruik meervoudsvorm voor collecties",
+    "explanation": "Collecties worden altijd in meervoud aangesproken, ook al vraag je er maar één op."
+  },
+  {
+    "id": 3,
+    "good": "/games/123",
+    "bad": "/games?id=123",
+    "rule": "Gebruik van ID voor specifieke resources",
+    "explanation": "Een specifieke resource wordt aangesproken via het pad, niet via een query parameter."
+  },
+  {
+    "id": 4,
+    "good": "/products",
+    "bad": "/Products",
+    "rule": "Gebruik kleine letters",
+    "explanation": "URI's gebruiken altijd kleine letters. Hoofdletters zijn verwarrend en foutgevoelig."
+  },
+  {
+    "id": 5,
+    "good": "/shipping-addresses",
+    "bad": "/shipping_addresses",
+    "rule": "Gebruik koppeltekens (-) voor woorden in resource namen",
+    "explanation": "Koppeltekens (-) zijn de standaard in URI's, niet underscores (_)."
+  },
+  {
+    "id": 6,
+    "good": "/shipping-addresses",
+    "bad": "/shippingAddresses",
+    "rule": "Gebruik koppeltekens (-), geen camelCase",
+    "explanation": "CamelCase is voor code, koppeltekens zijn voor URI's."
+  },
+  {
+    "id": 7,
+    "good": "/users/123/orders",
+    "bad": "/orders?userId=123",
+    "rule": "Gebruik hiërarchie voor het weergeven van relaties",
+    "explanation": "Als orders altijd bij een user horen, toon dat via de URI-hiërarchie."
+  },
+  {
+    "id": 8,
+    "good": "/games?genre=rpg",
+    "bad": "/getRpgGames",
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Filtering hoort via query parameters, niet ingebakken in het pad."
+  },
+  {
+    "id": 9,
+    "good": "/games?sort=rating&page=2",
+    "bad": "/games/sorted-by-rating/page-2",
+    "rule": "Gebruik query parameters voor sortering en paginering",
+    "explanation": "Sortering en paginering zijn geen resources — ze horen in query parameters."
+  },
+  {
+    "id": 10,
+    "good": "/developers",
+    "bad": "/createDeveloper",
+    "rule": "Gebruik zelfstandige naamwoorden, geen werkwoorden",
+    "explanation": "POST /developers maakt een nieuwe developer aan. De methode bepaalt de actie."
+  },
+  {
+    "id": 11,
+    "good": "/games/456/reviews",
+    "bad": "/reviews-for-game-456",
+    "rule": "Gebruik hiërarchie, geen beschrijvende paden",
+    "explanation": "Relaties worden uitgedrukt via geneste paden: /games/456/reviews"
+  },
+  {
+    "id": 12,
+    "good": "/developers/789",
+    "bad": "/developer/get/789",
+    "rule": "Geen werkwoorden, meervoudsvorm",
+    "explanation": "Twee fouten: 'get' is een werkwoord en 'developer' moet meervoud zijn."
+  },
+  {
+    "id": 13,
+    "good": "/games?platform=PS5",
+    "bad": "/ps5-games",
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Platform is een filter, geen aparte resource. Gebruik query parameters."
+  },
+  {
+    "id": 14,
+    "good": "/developers?country=Japan",
+    "bad": "/japanese-developers",
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Land is een filter op de developers collectie, niet een aparte collectie."
+  },
+  {
+    "id": 15,
+    "good": "/games/123/reviews/456",
+    "bad": "/game-123-review-456",
+    "rule": "Gebruik hiërarchie en ID's voor specifieke resources",
+    "explanation": "Geneste resources gebruiken de hiërarchie: /games/123/reviews/456"
+  },
+  {
+    "id": 16,
+    "good": "/order-items",
+    "bad": "/orderItems",
+    "rule": "Gebruik koppeltekens (-), geen camelCase",
+    "explanation": "URI's gebruiken koppeltekens om woorden te scheiden, geen camelCase."
+  },
+  {
+    "id": 17,
+    "good": "/games?search=zelda",
+    "bad": "/search/games/zelda",
+    "rule": "Gebruik query parameters voor zoekfunctionaliteit",
+    "explanation": "Zoeken is een filter op een collectie, niet een apart pad."
+  },
+  {
+    "id": 18,
+    "good": "/users/42/shipping-addresses",
+    "bad": "/users/42/ShippingAddresses",
+    "rule": "Gebruik kleine letters en koppeltekens",
+    "explanation": "Altijd kleine letters en koppeltekens, ook bij samengestelde resource namen."
+  },
+  {
+    "id": 19,
+    "good": "/reviews?score=5",
+    "bad": "/five-star-reviews",
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Score is een filtercriterium, geen apart endpoint."
+  },
+  {
+    "id": 20,
+    "good": "/games",
+    "bad": "/api/v1/getAllGames",
+    "rule": "Geen werkwoorden, consistente naamgeving",
+    "explanation": "Vermijd werkwoorden zoals 'getAll'. De collectie /games is voldoende."
+  }
+]

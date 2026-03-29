@@ -1,0 +1,152 @@
+[
+  {
+    "id": 1,
+    "difficulty": "beginner",
+    "scenario": "Haal alle games op uit de API.",
+    "correctUri": "/games",
+    "acceptAlternatives": [],
+    "hints": ["Gebruik meervoudsvorm voor collecties", "Geen werkwoorden in het pad"],
+    "rule": "Gebruik zelfstandige naamwoorden, geen werkwoorden",
+    "explanation": "Een collectie van games wordt aangesproken met het meervoud: /games"
+  },
+  {
+    "id": 2,
+    "difficulty": "beginner",
+    "scenario": "Haal alle developers op.",
+    "correctUri": "/developers",
+    "acceptAlternatives": [],
+    "hints": ["Meervoudsvorm", "Zelfstandig naamwoord"],
+    "rule": "Gebruik meervoudsvorm voor collecties",
+    "explanation": "Collecties worden altijd in meervoud aangesproken: /developers"
+  },
+  {
+    "id": 3,
+    "difficulty": "beginner",
+    "scenario": "Haal een specifieke game op met ID 'abc-123'.",
+    "correctUri": "/games/abc-123",
+    "acceptAlternatives": [],
+    "hints": ["Gebruik de collectie gevolgd door het ID", "Structuur: /collectie/:id"],
+    "rule": "Gebruik van ID voor specifieke resources",
+    "explanation": "Een specifieke resource bereik je via /collectie/id, dus /games/abc-123"
+  },
+  {
+    "id": 4,
+    "difficulty": "beginner",
+    "scenario": "Haal alle reviews op van een game met ID 'xyz-789'.",
+    "correctUri": "/games/xyz-789/reviews",
+    "acceptAlternatives": [],
+    "hints": ["Reviews zijn een sub-resource van games", "Gebruik hiërarchie"],
+    "rule": "Gebruik hiërarchie voor het weergeven van relaties",
+    "explanation": "Reviews horen bij een game, dus: /games/xyz-789/reviews"
+  },
+  {
+    "id": 5,
+    "difficulty": "beginner",
+    "scenario": "Haal alle games op die tot het genre 'rpg' behoren.",
+    "correctUri": "/games?genre=rpg",
+    "acceptAlternatives": [],
+    "hints": ["Gebruik query parameters voor filtering", "Het pad blijft /games"],
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Filtering doe je via query parameters: /games?genre=rpg"
+  },
+  {
+    "id": 6,
+    "difficulty": "intermediate",
+    "scenario": "Haal alle games op voor het platform 'PS5', gesorteerd op rating.",
+    "correctUri": "/games?platform=PS5&sort=rating",
+    "acceptAlternatives": ["/games?platform=PS5&sort=rating", "/games?sort=rating&platform=PS5"],
+    "hints": ["Combineer meerdere query parameters met &", "Filtering en sortering zijn query parameters"],
+    "rule": "Gebruik query parameters voor filtering, sortering en paginering",
+    "explanation": "Meerdere filters combineer je: /games?platform=PS5&sort=rating"
+  },
+  {
+    "id": 7,
+    "difficulty": "intermediate",
+    "scenario": "Haal pagina 2 op van alle games in het genre 'adventure'.",
+    "correctUri": "/games?genre=adventure&page=2",
+    "acceptAlternatives": ["/games?page=2&genre=adventure"],
+    "hints": ["Paginering is ook een query parameter", "Combineer genre-filter met page"],
+    "rule": "Gebruik query parameters voor filtering, sortering en paginering",
+    "explanation": "Paginering combineert met filtering: /games?genre=adventure&page=2"
+  },
+  {
+    "id": 8,
+    "difficulty": "intermediate",
+    "scenario": "Haal alle games op van een developer met ID 'dev-456'.",
+    "correctUri": "/developers/dev-456/games",
+    "acceptAlternatives": ["/games?developerId=dev-456"],
+    "hints": ["Gebruik hiërarchie: developer → games", "Of gebruik een query parameter op /games"],
+    "rule": "Gebruik hiërarchie voor het weergeven van relaties",
+    "explanation": "De games van een developer: /developers/dev-456/games (of /games?developerId=dev-456)"
+  },
+  {
+    "id": 9,
+    "difficulty": "intermediate",
+    "scenario": "Haal een specifieke review (ID 'rev-001') op van game 'game-555'.",
+    "correctUri": "/games/game-555/reviews/rev-001",
+    "acceptAlternatives": [],
+    "hints": ["Dubbele hiërarchie: game → review", "Twee niveaus diep"],
+    "rule": "Gebruik hiërarchie voor het weergeven van relaties",
+    "explanation": "Geneste resources: /games/game-555/reviews/rev-001"
+  },
+  {
+    "id": 10,
+    "difficulty": "intermediate",
+    "scenario": "Zoek naar developers uit het land 'Japan'.",
+    "correctUri": "/developers?country=Japan",
+    "acceptAlternatives": [],
+    "hints": ["Zoeken/filteren = query parameters", "Het pad blijft de collectie"],
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Filteren op land: /developers?country=Japan"
+  },
+  {
+    "id": 11,
+    "difficulty": "advanced",
+    "scenario": "Ontwerp een endpoint om de verzend-adressen van een gebruiker met ID 42 op te halen.",
+    "correctUri": "/users/42/shipping-addresses",
+    "acceptAlternatives": [],
+    "hints": ["Gebruik koppeltekens voor samengestelde woorden", "Hiërarchie: user → adressen"],
+    "rule": "Gebruik koppeltekens (-) voor woorden in resource namen",
+    "explanation": "Samengestelde woorden met koppeltekens en hiërarchie: /users/42/shipping-addresses"
+  },
+  {
+    "id": 12,
+    "difficulty": "advanced",
+    "scenario": "Ontwerp een endpoint om alle bestellingen van klant 'cust-99' te bekijken, gefilterd op status 'delivered'.",
+    "correctUri": "/customers/cust-99/orders?status=delivered",
+    "acceptAlternatives": [],
+    "hints": ["Hiërarchie voor de relatie", "Query parameter voor de filter"],
+    "rule": "Combinatie van hiërarchie en query parameters",
+    "explanation": "Relatie via pad, filter via query: /customers/cust-99/orders?status=delivered"
+  },
+  {
+    "id": 13,
+    "difficulty": "advanced",
+    "scenario": "Haal alle reviews op met een score van 5, geschreven door reviewer 'Vinnie'.",
+    "correctUri": "/reviews?score=5&reviewer=Vinnie",
+    "acceptAlternatives": ["/reviews?reviewer=Vinnie&score=5"],
+    "hints": ["De flat route /reviews ondersteunt beide filters", "Combineer query parameters"],
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Meerdere filters op de flat route: /reviews?score=5&reviewer=Vinnie"
+  },
+  {
+    "id": 14,
+    "difficulty": "advanced",
+    "scenario": "Ontwerp een URI voor het ophalen van alle sensoren op verdieping 2, kamer 5 in een slim gebouw.",
+    "correctUri": "/floors/2/rooms/5/sensors",
+    "acceptAlternatives": ["/buildings/1/floors/2/rooms/5/sensors"],
+    "hints": ["Gebruik meerdere niveaus van hiërarchie", "Verdieping → kamer → sensoren"],
+    "rule": "Gebruik hiërarchie voor het weergeven van relaties",
+    "explanation": "Diepe hiërarchie: /floors/2/rooms/5/sensors"
+  },
+  {
+    "id": 15,
+    "difficulty": "advanced",
+    "scenario": "Zoek games met de tekst 'zelda' in de titel, die je bezit, op het platform 'Switch'.",
+    "correctUri": "/games?search=zelda&owned=true&platform=Switch",
+    "acceptAlternatives": ["/games?owned=true&search=zelda&platform=Switch", "/games?platform=Switch&search=zelda&owned=true", "/games?platform=Switch&owned=true&search=zelda", "/games?search=zelda&platform=Switch&owned=true", "/games?owned=true&platform=Switch&search=zelda"],
+    "hints": ["Alle drie zijn query parameters", "De volgorde maakt niet uit"],
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Drie filters gecombineerd: /games?search=zelda&owned=true&platform=Switch"
+  }
+]

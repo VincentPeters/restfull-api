@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import glossary from '../data/glossary.json';
+---
+
+<BaseLayout title="Naslagwerk" breadcrumbs={[{ label: "Naslagwerk" }]}>
+  <header class="mb-12">
+    <h1 class="mb-3">Naslagwerk</h1>
+    <p class="text-[var(--color-text-secondary)] max-w-xl">
+      Alle belangrijke begrippen, HTTP-methoden, statuscodes en regels op één plek.
+    </p>
+  </header>
+
+  <!-- Search -->
+  <div class="mb-12">
+    <input
+      type="text"
+      id="search-input"
+      placeholder="Zoek een begrip, methode of statuscode..."
+      class="w-full max-w-md px-4 py-3 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] focus:outline-none focus:border-[var(--color-accent-rust)] transition-colors"
+    />
+  </div>
+
+  <!-- REST Principles -->
+  <section class="mb-16 searchable-section">
+    <h2 class="mb-6">De 5 REST-principes</h2>
+    <div class="space-y-4">
+      {glossary.restPrinciples.map((p, i) => (
+        <div class="searchable-item flex gap-4 items-start" data-search={`${p.name} ${p.description}`.toLowerCase()}>
+          <span class="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-sm font-medium" style="font-family: var(--font-code);">{i + 1}</span>
+          <div>
+            <h3 class="text-base font-medium mb-1" style="font-family: var(--font-display);">{p.name}</h3>
+            <p class="text-sm text-[var(--color-text-secondary)]">{p.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- HTTP Methods -->
+  <section class="mb-16 searchable-section">
+    <h2 class="mb-6">HTTP-methoden</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-[var(--color-border)] text-left">
+            <th class="pb-3 pr-6 font-medium text-[var(--color-text-secondary)]">Methode</th>
+            <th class="pb-3 pr-6 font-medium text-[var(--color-text-secondary)]">CRUD</th>
+            <th class="pb-3 pr-6 font-medium text-[var(--color-text-secondary)]">Beschrijving</th>
+            <th class="pb-3 font-medium text-[var(--color-text-secondary)]">Idempotent</th>
+          </tr>
+        </thead>
+        <tbody>
+          {glossary.httpMethods.map((m) => (
+            <tr class="searchable-item border-b border-[var(--color-border)]/50" data-search={`${m.method} ${m.crud} ${m.description}`.toLowerCase()}>
+              <td class="py-3 pr-6">
+                <span class="specimen inline-block px-3 py-1 text-xs rounded" style="font-family: var(--font-code);">
+                  <span class="method">{m.method}</span>
+                </span>
+              </td>
+              <td class="py-3 pr-6 text-[var(--color-text-secondary)]">{m.crud}</td>
+              <td class="py-3 pr-6">{m.description}</td>
+              <td class="py-3">
+                <span class={m.idempotent ? 'text-[var(--color-accent-sage)]' : 'text-[var(--color-accent-rust)]'}>
+                  {m.idempotent ? 'Ja' : 'Nee'}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Status Codes -->
+  <section class="mb-16 searchable-section">
+    <h2 class="mb-6">Statuscodes</h2>
+    <div class="grid gap-3">
+      {glossary.statusCodes.map((s) => {
+        const color = s.category === 'success' ? 'var(--color-accent-sage)' : s.category === 'client-error' ? 'var(--color-accent-ochre)' : 'var(--color-accent-rust)';
+        return (
+          <div class="searchable-item flex items-start gap-4 py-2" data-search={`${s.code} ${s.label} ${s.description}`.toLowerCase()}>
+            <span
+              class="shrink-0 font-medium text-sm px-2 py-0.5 rounded"
+              style={`font-family: var(--font-code); color: ${color}; background: color-mix(in oklch, ${color} 12%, transparent);`}
+            >
+              {s.code}
+            </span>
+            <div>
+              <span class="font-medium text-sm">{s.label}</span>
+              <span class="text-sm text-[var(--color-text-secondary)]"> — {s.description}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <!-- URI Naming Rules -->
+  <section class="mb-16 searchable-section">
+    <h2 class="mb-6">URI-naamgevingsregels</h2>
+    <div class="space-y-4">
+      {glossary.uriRules.map((r, i) => (
+        <div class="searchable-item" data-search={`${r.rule} ${r.good} ${r.bad}`.toLowerCase()}>
+          <p class="font-medium text-sm mb-2">
+            <span class="text-[var(--color-text-secondary)] mr-2">{i + 1}.</span>
+            {r.rule}
+          </p>
+          <div class="flex gap-4 text-xs">
+            <div class="specimen inline-flex items-center gap-2 px-3 py-1.5 rounded">
+              <span class="text-[var(--color-accent-sage)]">&#10003;</span>
+              <code>{r.good}</code>
+            </div>
+            <div class="specimen inline-flex items-center gap-2 px-3 py-1.5 rounded opacity-60">
+              <span class="text-[var(--color-accent-rust)]">&#10007;</span>
+              <code>{r.bad}</code>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Glossary Terms -->
+  <section class="mb-16 searchable-section">
+    <h2 class="mb-6">Woordenlijst</h2>
+    <div class="space-y-0">
+      {glossary.terms.map((t) => (
+        <div class="searchable-item py-3 border-b border-[var(--color-border)]/30" data-search={`${t.term} ${t.definition}`.toLowerCase()}>
+          <dt class="font-medium text-sm" style="font-family: var(--font-display);">{t.term}</dt>
+          <dd class="text-sm text-[var(--color-text-secondary)] mt-0.5">{t.definition}</dd>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Gaming API Reference -->
+  <section class="mb-8 p-6 bg-[var(--color-bg-secondary)] rounded-lg">
+    <h2 class="mb-4">KdG Gaming API</h2>
+    <div class="grid md:grid-cols-2 gap-6 text-sm">
+      <div>
+        <p class="text-[var(--color-text-secondary)] mb-2">Base URL</p>
+        <div class="specimen rounded px-3 py-2 text-xs">https://kdg-gaming-api.me-945.workers.dev</div>
+      </div>
+      <div>
+        <p class="text-[var(--color-text-secondary)] mb-2">Authenticatie</p>
+        <p>GET is open. Write-operaties vereisen header: <code class="specimen inline px-2 py-0.5 rounded text-xs">api-key: JOUW_KEY</code></p>
+      </div>
+      <div>
+        <p class="text-[var(--color-text-secondary)] mb-2">Genres</p>
+        <div class="flex flex-wrap gap-1.5">
+          {['fps', 'rpg', 'racing', 'sports', 'adventure', 'simulation', 'fighting'].map(g => (
+            <span class="text-xs px-2 py-0.5 rounded bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)]">{g}</span>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p class="text-[var(--color-text-secondary)] mb-2">Platforms</p>
+        <div class="flex flex-wrap gap-1.5">
+          {['PC', 'PS5', 'Xbox', 'Switch', 'Multi'].map(p => (
+            <span class="text-xs px-2 py-0.5 rounded bg-[var(--color-bg-primary)] text-[var(--color-text-secondary)]">{p}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+    <p class="text-xs text-[var(--color-text-secondary)] mt-4">
+      Database reset elke nacht om 00:00 UTC.
+      <a href="https://kdg-gaming-api.me-945.workers.dev/docs" target="_blank" rel="noopener" class="ml-1">Volledige documentatie ↗</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<script>
+  const input = document.getElementById('search-input') as HTMLInputElement;
+  const items = document.querySelectorAll('.searchable-item');
+
+  input?.addEventListener('input', () => {
+    const query = input.value.toLowerCase().trim();
+    items.forEach(item => {
+      const text = (item as HTMLElement).dataset.search || '';
+      (item as HTMLElement).style.display = !query || text.includes(query) ? '' : 'none';
+    });
+  });
+</script>

@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "scenario": "Een server slaat de login-sessie op en gebruikt die bij het volgende verzoek zonder dat de client een token meestuurt.",
+    "question": "Welk REST-principe wordt hier geschonden?",
+    "options": ["Uniform Interface", "Client-Server", "Stateless", "Cacheable"],
+    "correctIndex": 2,
+    "explanation": "Bij REST is elke request stateless — de server bewaart geen sessie-informatie. De client moet alle nodige info (zoals een token) bij elke request meesturen."
+  },
+  {
+    "id": 2,
+    "scenario": "Een API gebruikt GET /getUsers, POST /createUser en DELETE /removeUser/123 als endpoints.",
+    "question": "Welk REST-principe wordt hier geschonden?",
+    "options": ["Uniform Interface", "Stateless", "Client-Server", "Layered System"],
+    "correctIndex": 0,
+    "explanation": "De Uniform Interface vereist consistente URL-structuren. Werkwoorden horen niet in URI's — gebruik GET /users, POST /users en DELETE /users/123."
+  },
+  {
+    "id": 3,
+    "scenario": "Een mobiele app, een website en een Node-RED dashboard gebruiken allemaal dezelfde API om sensordata op te halen.",
+    "question": "Welk REST-principe wordt hier gedemonstreerd?",
+    "options": ["Cacheable", "Client-Server", "Stateless", "Uniform Interface"],
+    "correctIndex": 1,
+    "explanation": "Client-Server scheiding: de server biedt enkel data aan. Verschillende clients (app, website, dashboard) kunnen dezelfde API gebruiken."
+  },
+  {
+    "id": 4,
+    "scenario": "Een temperatuursensor stuurt elke 30 seconden een meting. De API geeft bij elk antwoord 'Cache-Control: max-age=30' mee.",
+    "question": "Welk REST-principe wordt hier toegepast?",
+    "options": ["Stateless", "Cacheable", "Layered System", "Uniform Interface"],
+    "correctIndex": 1,
+    "explanation": "De Cacheable eigenschap: de server vertelt de client hoe lang de data geldig blijft, zodat niet elke keer opnieuw opgevraagd hoeft te worden."
+  },
+  {
+    "id": 5,
+    "scenario": "Een request van een client gaat eerst door een load balancer, dan een API gateway die de API key controleert, dan naar de applicatieserver.",
+    "question": "Welk REST-principe wordt hier toegepast?",
+    "options": ["Client-Server", "Stateless", "Layered System", "Uniform Interface"],
+    "correctIndex": 2,
+    "explanation": "Layered System: de architectuur is opgedeeld in lagen (load balancer, gateway, server). De client merkt hier niets van."
+  },
+  {
+    "id": 6,
+    "scenario": "Een API retourneert HTML-pagina's met ingebouwde styling voor een specifieke mobiele app.",
+    "question": "Welk REST-principe wordt hier geschonden?",
+    "options": ["Stateless", "Client-Server", "Cacheable", "Layered System"],
+    "correctIndex": 1,
+    "explanation": "Client-Server scheiding: de server hoort alleen data te leveren (JSON), geen presentatie (HTML/CSS). De client bepaalt hoe data getoond wordt."
+  },
+  {
+    "id": 7,
+    "scenario": "Een student stuurt een GET-request naar /api/sensors/temp1 en krijgt de huidige temperatuur terug. De student hoeft niet eerst in te loggen of een sessie te starten.",
+    "question": "Welk REST-principe wordt hier gedemonstreerd?",
+    "options": ["Uniform Interface", "Stateless", "Layered System", "Cacheable"],
+    "correctIndex": 1,
+    "explanation": "Stateless: het request bevat alle informatie die de server nodig heeft. Er is geen sessie of voorafgaande interactie nodig."
+  },
+  {
+    "id": 8,
+    "scenario": "Een API gebruikt voor alle resources dezelfde structuur: GET /resource voor ophalen, POST /resource voor aanmaken, PUT /resource/:id voor updaten, DELETE /resource/:id voor verwijderen.",
+    "question": "Welk REST-principe wordt hier gedemonstreerd?",
+    "options": ["Uniform Interface", "Client-Server", "Cacheable", "Stateless"],
+    "correctIndex": 0,
+    "explanation": "Uniform Interface: alle resources volgen dezelfde voorspelbare structuur met standaard HTTP-methoden."
+  },
+  {
+    "id": 9,
+    "scenario": "Een API stuurt bij statische content (zoals een lijst van landen) de header 'Cache-Control: max-age=86400' mee.",
+    "question": "Wat betekent dit voor de client?",
+    "options": ["De client mag deze data 24 uur bewaren", "De data wordt na 86400 requests ongeldig", "De server slaat de data 24 uur op", "De client moet elke 24 uur opnieuw authenticeren"],
+    "correctIndex": 0,
+    "explanation": "max-age=86400 betekent dat de data 86400 seconden (= 24 uur) geldig is. De client hoeft in die periode niet opnieuw te vragen."
+  },
+  {
+    "id": 10,
+    "scenario": "Een bedrijf plaatst een reverse proxy voor hun API-server die SSL-certificaten controleert en DDoS-aanvallen blokkeert, zonder de API-code aan te passen.",
+    "question": "Welk REST-principe maakt dit mogelijk?",
+    "options": ["Uniform Interface", "Stateless", "Cacheable", "Layered System"],
+    "correctIndex": 3,
+    "explanation": "Layered System: je kunt beveiligingslagen toevoegen zonder de API zelf aan te passen. De client merkt geen verschil."
+  },
+  {
+    "id": 11,
+    "scenario": "Een API-server crasht en wordt herstart. Alle clients kunnen direct weer verder werken zonder opnieuw in te loggen.",
+    "question": "Welk REST-principe zorgt hiervoor?",
+    "options": ["Cacheable", "Layered System", "Stateless", "Client-Server"],
+    "correctIndex": 2,
+    "explanation": "Stateless: de server bewaart geen sessies. Na een herstart hoeft er geen sessie-informatie hersteld te worden — elke request is zelfstandig."
+  },
+  {
+    "id": 12,
+    "scenario": "Een IoT-systeem heeft sensoren die elke seconde data sturen. De API geeft voor live sensordata 'Cache-Control: no-cache' mee, maar voor ruimte-informatie 'Cache-Control: max-age=3600'.",
+    "question": "Waarom verschilt de cache-strategie?",
+    "options": ["Live data verandert continu, ruimte-info zelden", "Sensoren zijn belangrijker dan ruimtes", "No-cache is sneller dan max-age", "Dit is een schending van het Cacheable principe"],
+    "correctIndex": 0,
+    "explanation": "Slim cachen: data die vaak verandert (sensormetingen) mag niet gecacht worden, terwijl stabiele data (ruimte-info) lang gecacht kan worden."
+  },
+  {
+    "id": 13,
+    "scenario": "Een API heeft de volgende endpoints: GET /api/devices/123, POST /api/devices, PUT /api/devices/123, DELETE /api/devices/123.",
+    "question": "Wat klopt er aan deze API?",
+    "options": ["De endpoints volgen het Uniform Interface principe", "De API is Stateless", "De API gebruikt een Layered System", "De API is Cacheable"],
+    "correctIndex": 0,
+    "explanation": "De endpoints zijn consistent, voorspelbaar en gebruiken standaard HTTP-methoden — een perfecte Uniform Interface."
+  },
+  {
+    "id": 14,
+    "scenario": "Een load balancer verdeelt requests over drie verschillende servers. De client stuurt steeds hetzelfde request en krijgt steeds hetzelfde antwoord, ongeacht welke server het verwerkt.",
+    "question": "Welke twee principes maken dit mogelijk?",
+    "options": ["Stateless + Layered System", "Cacheable + Uniform Interface", "Client-Server + Cacheable", "Uniform Interface + Stateless"],
+    "correctIndex": 0,
+    "explanation": "Stateless zorgt dat elke server het request kan verwerken (geen sessie nodig). Layered System maakt de load balancer als tussenlaag mogelijk."
+  },
+  {
+    "id": 15,
+    "scenario": "Een developer bouwt een API die bij het eerste request een gebruikers-ID in het geheugen opslaat en bij volgende requests automatisch filtert op die gebruiker.",
+    "question": "Welk probleem ontstaat hierdoor?",
+    "options": ["De API is niet meer Stateless", "De API heeft geen Uniform Interface", "De API is niet meer Cacheable", "De API schendt Client-Server"],
+    "correctIndex": 0,
+    "explanation": "De server onthoudt informatie tussen requests — dit schendt het Stateless principe. Elke request moet alle nodige info bevatten."
+  },
+  {
+    "id": 16,
+    "scenario": "Een Python script en een React webapp halen beide dezelfde data op via GET /api/sensors/temp1, maar tonen het compleet anders.",
+    "question": "Dit illustreert het voordeel van welk principe?",
+    "options": ["Layered System", "Client-Server", "Stateless", "Uniform Interface"],
+    "correctIndex": 1,
+    "explanation": "Client-Server: de API levert alleen data. Elke client bepaalt zelf hoe de data gepresenteerd wordt."
+  },
+  {
+    "id": 17,
+    "scenario": "Een API-gateway controleert rate limits (max 100 requests per minuut), verifieert JWT tokens en stuurt het request dan door naar de applicatieserver.",
+    "question": "De API-gateway is een voorbeeld van welk principe?",
+    "options": ["Uniform Interface", "Cacheable", "Layered System", "Client-Server"],
+    "correctIndex": 2,
+    "explanation": "Layered System: de gateway is een tussenlaag die beveiliging en rate limiting afhandelt, apart van de applicatielogica."
+  },
+  {
+    "id": 18,
+    "scenario": "Bij elke request naar de Gaming API stuurt de client een 'api-key: mijn-sleutel' header mee.",
+    "question": "Dit is een toepassing van welk principe?",
+    "options": ["Cacheable", "Stateless", "Layered System", "Uniform Interface"],
+    "correctIndex": 1,
+    "explanation": "Stateless: de client stuurt bij elke request alle authenticatie-informatie mee. De server hoeft geen sessie bij te houden."
+  },
+  {
+    "id": 19,
+    "scenario": "Een API retourneert bij GET /games altijd dezelfde JSON-structuur: een array van game-objecten met title, genre, platform, rating. Ongeacht welke client het opvraagt.",
+    "question": "Welk principe zorgt voor deze consistentie?",
+    "options": ["Stateless", "Cacheable", "Client-Server", "Uniform Interface"],
+    "correctIndex": 3,
+    "explanation": "Uniform Interface: de response-structuur is altijd hetzelfde, ongeacht de client. Voorspelbaar en consistent."
+  },
+  {
+    "id": 20,
+    "scenario": "Een smart building API heeft 'Cache-Control: no-cache' voor live sensor data en 'Cache-Control: max-age=3600' voor gebouwinformatie. De client beslist zelf of en hoe het cacht.",
+    "question": "Welke twee principes spelen hier samen?",
+    "options": ["Cacheable + Client-Server", "Stateless + Layered System", "Uniform Interface + Cacheable", "Client-Server + Stateless"],
+    "correctIndex": 0,
+    "explanation": "Cacheable: de server geeft cache-instructies mee. Client-Server: de client beslist zelf hoe het met die instructies omgaat."
+  }
+]

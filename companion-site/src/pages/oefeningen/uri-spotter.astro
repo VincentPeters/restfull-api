@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import pairs from '../../data/uri-spotter.json';
+---
+
+<BaseLayout title="URI Spotter" breadcrumbs={[{ label: "Oefeningen", href: "/" }, { label: "URI Spotter" }]}>
+  <header class="mb-10">
+    <h1 class="mb-3">Goed of Fout?</h1>
+    <p class="text-[var(--color-text-secondary)] max-w-xl">
+      Twee URI's, maar slechts één volgt de RESTful conventies. Klik op de juiste.
+    </p>
+  </header>
+
+  <div id="game" data-pairs={JSON.stringify(pairs)}>
+    <!-- Progress -->
+    <div class="flex items-baseline justify-between mb-8">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        Vraag <span id="current" class="text-[var(--color-text-primary)] font-medium">1</span> van <span id="total"></span>
+      </p>
+      <p class="text-sm" style="font-family: var(--font-display);">
+        <span id="score" class="text-2xl font-light text-[var(--color-text-primary)]">0</span>
+        <span class="text-[var(--color-text-secondary)]"> / </span>
+        <span id="attempted" class="text-[var(--color-text-secondary)]">0</span>
+      </p>
+    </div>
+
+    <!-- URI Pair -->
+    <div class="grid md:grid-cols-2 gap-4 mb-6">
+      <button id="option-a" class="specimen text-left cursor-pointer rounded-lg transition-all duration-300 hover:ring-2 hover:ring-[var(--color-accent-ochre)]/30 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-ochre)]/50">
+        <code id="uri-a" class="block text-sm"></code>
+      </button>
+      <button id="option-b" class="specimen text-left cursor-pointer rounded-lg transition-all duration-300 hover:ring-2 hover:ring-[var(--color-accent-ochre)]/30 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-ochre)]/50">
+        <code id="uri-b" class="block text-sm"></code>
+      </button>
+    </div>
+
+    <!-- Feedback -->
+    <div id="feedback" class="hidden mb-6 py-4 animation-slideIn">
+      <p id="feedback-result" class="font-medium text-sm mb-1"></p>
+      <p id="feedback-rule" class="text-sm text-[var(--color-text-secondary)] mb-1" style="font-family: var(--font-display);"></p>
+      <p id="feedback-explanation" class="text-sm text-[var(--color-text-secondary)] italic"></p>
+    </div>
+
+    <!-- Next button -->
+    <button id="next-btn" class="hidden px-5 py-2.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+      Volgende →
+    </button>
+
+    <!-- End screen -->
+    <div id="end-screen" class="hidden text-center py-16">
+      <p class="text-6xl font-light mb-4" style="font-family: var(--font-display);" id="final-score"></p>
+      <p class="text-[var(--color-text-secondary)] mb-8">vragen correct beantwoord</p>
+      <button id="restart-btn" class="px-5 py-2.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+        Opnieuw beginnen
+      </button>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const game = document.getElementById('game')!;
+  const pairs = JSON.parse(game.dataset.pairs || '[]');
+
+  let shuffled: typeof pairs = [];
+  let index = 0;
+  let score = 0;
+  let attempted = 0;
+  let answered = false;
+
+  const $current = document.getElementById('current')!;
+  const $total = document.getElementById('total')!;
+  const $score = document.getElementById('score')!;
+  const $attempted = document.getElementById('attempted')!;
+  const $optionA = document.getElementById('option-a') as HTMLButtonElement;
+  const $optionB = document.getElementById('option-b') as HTMLButtonElement;
+  const $uriA = document.getElementById('uri-a')!;
+  const $uriB = document.getElementById('uri-b')!;
+  const $feedback = document.getElementById('feedback')!;
+  const $feedbackResult = document.getElementById('feedback-result')!;
+  const $feedbackRule = document.getElementById('feedback-rule')!;
+  const $feedbackExplanation = document.getElementById('feedback-explanation')!;
+  const $nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
+  const $endScreen = document.getElementById('end-screen')!;
+  const $finalScore = document.getElementById('final-score')!;
+  const $restartBtn = document.getElementById('restart-btn') as HTMLButtonElement;
+
+  // Track which side has the good URI
+  let goodSide: 'a' | 'b' = 'a';
+
+  function shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function start() {
+    shuffled = shuffle(pairs);
+    index = 0;
+    score = 0;
+    attempted = 0;
+    $total.textContent = String(shuffled.length);
+    $endScreen.classList.add('hidden');
+    render();
+  }
+
+  function render() {
+    if (index >= shuffled.length) {
+      showEnd();
+      return;
+    }
+
+    answered = false;
+    const pair = shuffled[index];
+    goodSide = Math.random() > 0.5 ? 'a' : 'b';
+
+    $uriA.textContent = goodSide === 'a' ? pair.good : pair.bad;
+    $uriB.textContent = goodSide === 'b' ? pair.good : pair.bad;
+
+    $current.textContent = String(index + 1);
+    $score.textContent = String(score);
+    $attempted.textContent = String(attempted);
+
+    // Reset styles
+    $optionA.style.borderColor = '';
+    $optionB.style.borderColor = '';
+    $optionA.style.opacity = '';
+    $optionB.style.opacity = '';
+    $optionA.disabled = false;
+    $optionB.disabled = false;
+    $feedback.classList.add('hidden');
+    $nextBtn.classList.add('hidden');
+  }
+
+  function choose(side: 'a' | 'b') {
+    if (answered) return;
+    answered = true;
+    attempted++;
+
+    const correct = side === goodSide;
+    if (correct) score++;
+
+    const chosen = side === 'a' ? $optionA : $optionB;
+    const other = side === 'a' ? $optionB : $optionA;
+    const goodBtn = goodSide === 'a' ? $optionA : $optionB;
+
+    if (correct) {
+      chosen.style.borderColor = 'var(--color-accent-sage)';
+      chosen.style.boxShadow = '0 0 0 2px var(--color-accent-sage)';
+      other.style.opacity = '0.4';
+      $feedbackResult.textContent = 'Correct!';
+      $feedbackResult.style.color = 'var(--color-accent-sage)';
+      $feedback.className = 'feedback-correct mb-6';
+    } else {
+      chosen.style.borderColor = 'var(--color-accent-rust)';
+      chosen.style.boxShadow = '0 0 0 2px var(--color-accent-rust)';
+      goodBtn.style.borderColor = 'var(--color-accent-sage)';
+      goodBtn.style.boxShadow = '0 0 0 2px var(--color-accent-sage)';
+      $feedbackResult.textContent = 'Niet juist';
+      $feedbackResult.style.color = 'var(--color-accent-rust)';
+      $feedback.className = 'feedback-incorrect mb-6';
+    }
+
+    $optionA.disabled = true;
+    $optionB.disabled = true;
+
+    const pair = shuffled[index];
+    $feedbackRule.textContent = pair.rule;
+    $feedbackExplanation.textContent = pair.explanation;
+    $feedback.classList.remove('hidden');
+
+    $score.textContent = String(score);
+    $attempted.textContent = String(attempted);
+    $nextBtn.classList.remove('hidden');
+  }
+
+  function showEnd() {
+    $optionA.parentElement!.classList.add('hidden');
+    $feedback.classList.add('hidden');
+    $nextBtn.classList.add('hidden');
+    $finalScore.textContent = `${score} / ${shuffled.length}`;
+    $endScreen.classList.remove('hidden');
+  }
+
+  $optionA.addEventListener('click', () => choose('a'));
+  $optionB.addEventListener('click', () => choose('b'));
+  $nextBtn.addEventListener('click', () => { index++; render(); });
+  $restartBtn.addEventListener('click', () => {
+    $optionA.parentElement!.classList.remove('hidden');
+    start();
+  });
+
+  start();
+</script>

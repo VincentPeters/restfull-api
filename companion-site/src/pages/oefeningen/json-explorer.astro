@@ -1,0 +1,212 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="JSON Explorer" breadcrumbs={[{ label: "Oefeningen", href: "/" }, { label: "JSON Explorer" }]}>
+  <header class="mb-10">
+    <h1 class="mb-3">JSON Explorer</h1>
+    <p class="text-[var(--color-text-secondary)] max-w-xl">
+      Verken live API-responses van de Gaming API. Klik op waarden om ze te kopiëren en beantwoord de uitdagingen.
+    </p>
+  </header>
+
+  <!-- Endpoint Selector -->
+  <div class="flex flex-wrap gap-3 mb-6">
+    <button data-endpoint="/games" class="endpoint-btn px-4 py-2 rounded-lg text-sm border border-[var(--color-border)] hover:border-[var(--color-accent-ochre)] transition-colors cursor-pointer">
+      <span style="font-family: var(--font-code);" class="text-xs"><span class="text-[var(--color-accent-ochre)]">GET</span> /games</span>
+    </button>
+    <button data-endpoint="/developers" class="endpoint-btn px-4 py-2 rounded-lg text-sm border border-[var(--color-border)] hover:border-[var(--color-accent-ochre)] transition-colors cursor-pointer">
+      <span style="font-family: var(--font-code);" class="text-xs"><span class="text-[var(--color-accent-ochre)]">GET</span> /developers</span>
+    </button>
+    <button data-endpoint="/reviews" class="endpoint-btn px-4 py-2 rounded-lg text-sm border border-[var(--color-border)] hover:border-[var(--color-accent-ochre)] transition-colors cursor-pointer">
+      <span style="font-family: var(--font-code);" class="text-xs"><span class="text-[var(--color-accent-ochre)]">GET</span> /reviews</span>
+    </button>
+  </div>
+
+  <!-- Status bar -->
+  <div class="flex items-center gap-3 mb-4 text-xs text-[var(--color-text-secondary)]">
+    <span id="status">Kies een endpoint om data op te halen</span>
+    <span id="path-display" class="hidden px-2 py-0.5 rounded bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)]" style="font-family: var(--font-code);"></span>
+  </div>
+
+  <!-- JSON Viewer -->
+  <div id="json-viewer" class="specimen rounded-lg min-h-[300px] max-h-[600px] overflow-auto text-sm leading-relaxed mb-8">
+    <p class="text-[var(--color-text-secondary)] italic">Klik op een endpoint hierboven...</p>
+  </div>
+
+  <!-- Challenges -->
+  <div id="challenges" class="hidden">
+    <h2 class="mb-4">Uitdagingen</h2>
+    <div id="challenge-list" class="space-y-3"></div>
+  </div>
+
+  <!-- Copied toast -->
+  <div id="toast" class="fixed bottom-6 right-6 px-4 py-2 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm opacity-0 transition-opacity duration-300 pointer-events-none" style="font-family: var(--font-code);"></div>
+</BaseLayout>
+
+<script>
+  const API_BASE = 'https://kdg-gaming-api.me-945.workers.dev';
+  const $viewer = document.getElementById('json-viewer')!;
+  const $status = document.getElementById('status')!;
+  const $pathDisplay = document.getElementById('path-display')!;
+  const $challenges = document.getElementById('challenges')!;
+  const $challengeList = document.getElementById('challenge-list')!;
+  const $toast = document.getElementById('toast')!;
+
+  let currentData: any = null;
+
+  // Endpoint challenges
+  const endpointChallenges: Record<string, { question: string; answer: (data: any) => string }[]> = {
+    '/games': [
+      { question: 'Hoeveel games zijn er in totaal?', answer: (d) => String(Array.isArray(d) ? d.length : d.data?.length || '?') },
+      { question: 'Wat is de titel van het eerste spel?', answer: (d) => { const arr = Array.isArray(d) ? d : d.data; return arr?.[0]?.title || '?'; } },
+      { question: 'Welke genres komen voor in de resultaten?', answer: (d) => { const arr = Array.isArray(d) ? d : d.data; return [...new Set(arr?.map((g: any) => g.genre))].sort().join(', '); } },
+    ],
+    '/developers': [
+      { question: 'Hoeveel developers zijn er?', answer: (d) => String(Array.isArray(d) ? d.length : d.data?.length || '?') },
+      { question: 'Wat is de naam van de eerste developer?', answer: (d) => { const arr = Array.isArray(d) ? d : d.data; return arr?.[0]?.name || '?'; } },
+      { question: 'Uit welke landen komen de developers?', answer: (d) => { const arr = Array.isArray(d) ? d : d.data; return [...new Set(arr?.map((d: any) => d.country))].sort().join(', '); } },
+    ],
+    '/reviews': [
+      { question: 'Hoeveel reviews zijn er in totaal?', answer: (d) => String(Array.isArray(d) ? d.length : d.data?.length || '?') },
+      { question: 'Wat is de score van de eerste review?', answer: (d) => { const arr = Array.isArray(d) ? d : d.data; return String(arr?.[0]?.score || '?'); } },
+      { question: 'Wie schreef de eerste review?', answer: (d) => { const arr = Array.isArray(d) ? d : d.data; return arr?.[0]?.reviewer || '?'; } },
+    ],
+  };
+
+  function renderJson(data: any, path = '', indent = 0): string {
+    const pad = '  '.repeat(indent);
+    const padClose = '  '.repeat(Math.max(0, indent - 1));
+
+    if (data === null) return `<span class="json-null" data-path="${path}" style="color: #A89F94; cursor: pointer;">null</span>`;
+    if (typeof data === 'boolean') return `<span class="json-bool" data-path="${path}" style="color: var(--color-accent-ochre); cursor: pointer;">${data}</span>`;
+    if (typeof data === 'number') return `<span class="json-number" data-path="${path}" style="color: var(--color-accent-ochre); cursor: pointer;">${data}</span>`;
+    if (typeof data === 'string') return `<span class="json-string" data-path="${path}" style="color: var(--color-accent-sage); cursor: pointer;">"${escapeHtml(data)}"</span>`;
+
+    if (Array.isArray(data)) {
+      if (data.length === 0) return `<span style="color: #A89F94;">[]</span>`;
+      const items = data.map((item, i) => {
+        const childPath = `${path}[${i}]`;
+        return `${pad}${renderJson(item, childPath, indent + 1)}`;
+      }).join(',\n');
+      return `[<br>${items}<br>${padClose}]`;
+    }
+
+    if (typeof data === 'object') {
+      const keys = Object.keys(data);
+      if (keys.length === 0) return `<span style="color: #A89F94;">{}</span>`;
+      const entries = keys.map((key) => {
+        const childPath = path ? `${path}.${key}` : key;
+        return `${pad}<span style="color: #F7F3EE;">"${escapeHtml(key)}"</span>: ${renderJson(data[key], childPath, indent + 1)}`;
+      }).join(',\n');
+      return `{<br>${entries}<br>${padClose}}`;
+    }
+
+    return String(data);
+  }
+
+  function escapeHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function showToast(text: string) {
+    $toast.textContent = text;
+    $toast.style.opacity = '1';
+    setTimeout(() => { $toast.style.opacity = '0'; }, 1500);
+  }
+
+  function renderChallenges(endpoint: string) {
+    const ch = endpointChallenges[endpoint];
+    if (!ch || !currentData) { $challenges.classList.add('hidden'); return; }
+
+    $challengeList.innerHTML = '';
+    ch.forEach((c, i) => {
+      const div = document.createElement('div');
+      div.className = 'flex items-start gap-4 py-3';
+      const correctAnswer = c.answer(currentData);
+      div.innerHTML = `
+        <span class="shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-xs" style="font-family: var(--font-code);">${i + 1}</span>
+        <div class="flex-1">
+          <p class="text-sm mb-2">${c.question}</p>
+          <div class="flex gap-2 items-center">
+            <input type="text" class="challenge-input px-3 py-1.5 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded text-sm focus:outline-none focus:border-[var(--color-accent-rust)] transition-colors" style="font-family: var(--font-code);" placeholder="Jouw antwoord..." />
+            <button class="challenge-check px-3 py-1.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded text-xs hover:opacity-90 transition-opacity cursor-pointer">Check</button>
+          </div>
+          <p class="challenge-feedback text-xs mt-1 hidden"></p>
+        </div>
+      `;
+
+      const input = div.querySelector('.challenge-input') as HTMLInputElement;
+      const checkBtn = div.querySelector('.challenge-check') as HTMLButtonElement;
+      const feedback = div.querySelector('.challenge-feedback') as HTMLParagraphElement;
+
+      const doCheck = () => {
+        const val = input.value.trim();
+        if (!val) return;
+        // Flexible matching
+        const isCorrect = val.toLowerCase() === correctAnswer.toLowerCase() || correctAnswer.toLowerCase().includes(val.toLowerCase());
+        feedback.classList.remove('hidden');
+        if (isCorrect) {
+          feedback.textContent = 'Correct!';
+          feedback.style.color = 'var(--color-accent-sage)';
+          input.style.borderColor = 'var(--color-accent-sage)';
+        } else {
+          feedback.textContent = `Antwoord: ${correctAnswer}`;
+          feedback.style.color = 'var(--color-accent-rust)';
+          input.style.borderColor = 'var(--color-accent-rust)';
+        }
+      };
+
+      checkBtn.addEventListener('click', doCheck);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doCheck(); });
+      $challengeList.appendChild(div);
+    });
+
+    $challenges.classList.remove('hidden');
+  }
+
+  async function fetchEndpoint(endpoint: string) {
+    $status.textContent = 'Laden...';
+    $viewer.innerHTML = '<p class="text-[var(--color-text-secondary)] italic">Laden...</p>';
+
+    try {
+      const res = await fetch(`${API_BASE}${endpoint}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      currentData = await res.json();
+
+      $viewer.innerHTML = `<pre style="white-space: pre-wrap; word-break: break-word;">${renderJson(currentData, '', 1)}</pre>`;
+      $status.textContent = `${res.status} OK — ${API_BASE}${endpoint}`;
+
+      // Click to copy values
+      $viewer.querySelectorAll('[data-path]').forEach(el => {
+        el.addEventListener('click', () => {
+          const path = (el as HTMLElement).dataset.path || '';
+          const text = (el as HTMLElement).textContent || '';
+          $pathDisplay.textContent = path;
+          $pathDisplay.classList.remove('hidden');
+          navigator.clipboard?.writeText(text.replace(/^"|"$/g, ''));
+          showToast(`Gekopieerd: ${path}`);
+        });
+      });
+
+      renderChallenges(endpoint);
+    } catch (err: any) {
+      $viewer.innerHTML = `<p style="color: var(--color-accent-rust);">Fout bij het ophalen: ${err.message}. De API is mogelijk tijdelijk onbereikbaar.</p>`;
+      $status.textContent = 'Fout';
+    }
+  }
+
+  // Endpoint buttons
+  document.querySelectorAll('.endpoint-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.endpoint-btn').forEach(b => {
+        (b as HTMLElement).style.borderColor = '';
+        (b as HTMLElement).style.background = '';
+      });
+      (btn as HTMLElement).style.borderColor = 'var(--color-accent-ochre)';
+      (btn as HTMLElement).style.background = 'color-mix(in oklch, var(--color-accent-ochre) 8%, transparent)';
+      const endpoint = (btn as HTMLElement).dataset.endpoint!;
+      fetchEndpoint(endpoint);
+    });
+  });
+</script>

@@ -1,0 +1,308 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import data from '../../data/architecture-layers.json';
+---
+
+<BaseLayout title="Architectuur" breadcrumbs={[{ label: "Oefeningen", href: "/" }, { label: "Architectuur" }]}>
+  <header class="mb-10">
+    <h1 class="mb-3">Architectuur Builder</h1>
+    <p class="text-[var(--color-text-secondary)] max-w-xl">
+      Sleep de lagen van een REST API-architectuur in de juiste volgorde, van client (bovenaan) tot database (onderaan).
+    </p>
+  </header>
+
+  <div id="arch-game" data-layers={JSON.stringify(data.layers)}>
+    <div class="grid md:grid-cols-2 gap-10">
+      <!-- Drop Zone -->
+      <div>
+        <p class="text-sm text-[var(--color-text-secondary)] mb-4">Plaatsingsvolgorde (boven → onder)</p>
+        <div id="drop-zone" class="space-y-3">
+          {data.layers.map((_, i) => (
+            <div
+              class="drop-slot border-2 border-dashed border-[var(--color-border)] rounded-lg h-16 flex items-center justify-center text-sm text-[var(--color-text-secondary)] transition-all duration-200"
+              data-slot={i}
+            >
+              <span class="slot-label">{i + 1}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button id="check-btn" class="px-5 py-2.5 bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] rounded-lg text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
+            Controleer
+          </button>
+          <button id="reset-btn" class="px-5 py-2.5 border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text-secondary)] hover:border-[var(--color-accent-rust)] hover:text-[var(--color-accent-rust)] transition-colors cursor-pointer">
+            Reset
+          </button>
+        </div>
+
+        <!-- Feedback -->
+        <div id="feedback" class="hidden mt-6 py-4">
+          <p id="feedback-result" class="font-medium text-sm"></p>
+          <p id="feedback-detail" class="text-sm text-[var(--color-text-secondary)] mt-1"></p>
+        </div>
+      </div>
+
+      <!-- Source Cards -->
+      <div>
+        <p class="text-sm text-[var(--color-text-secondary)] mb-4">Beschikbare lagen (sleep of klik)</p>
+        <div id="source" class="space-y-3"></div>
+      </div>
+    </div>
+
+    <!-- Explanation Panel (shown after correct answer) -->
+    <div id="explanation-panel" class="hidden mt-12">
+      <h2 class="mb-6">Hoe de lagen samenwerken</h2>
+      <div class="space-y-0">
+        {data.layers.map((layer, i) => (
+          <div class="flex gap-4 items-start">
+            <div class="flex flex-col items-center">
+              <span class="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-xs shrink-0" style="font-family: var(--font-code);">{i + 1}</span>
+              {i < data.layers.length - 1 && (
+                <div class="w-px h-8 bg-[var(--color-accent-sage)] opacity-40"></div>
+              )}
+            </div>
+            <div class="pb-4">
+              <p class="font-medium text-sm" style="font-family: var(--font-display);">
+                {layer.label}
+                <span class="text-[var(--color-text-secondary)] font-normal"> — {layer.subtitle}</span>
+              </p>
+              <p class="text-sm text-[var(--color-text-secondary)]">{layer.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .layer-card {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--color-bg-primary);
+    cursor: grab;
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    user-select: none;
+  }
+  .layer-card:hover {
+    border-color: var(--color-accent-ochre);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .layer-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+  .layer-card.selected {
+    border-color: var(--color-accent-ochre);
+    background: color-mix(in oklch, var(--color-accent-ochre) 6%, var(--color-bg-primary));
+  }
+  .layer-card.placed {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .drop-slot.over {
+    border-color: var(--color-accent-ochre);
+    background: color-mix(in oklch, var(--color-accent-ochre) 6%, transparent);
+  }
+  .drop-slot.filled {
+    border-style: solid;
+    border-color: var(--color-border);
+    background: var(--color-bg-secondary);
+    cursor: pointer;
+  }
+  .drop-slot.correct {
+    border-color: var(--color-accent-sage);
+    background: color-mix(in oklch, var(--color-accent-sage) 8%, transparent);
+  }
+  .drop-slot.incorrect {
+    border-color: var(--color-accent-rust);
+    background: color-mix(in oklch, var(--color-accent-rust) 8%, transparent);
+  }
+</style>
+
+<script>
+  const gameEl = document.getElementById('arch-game')!;
+  const layers = JSON.parse(gameEl.dataset.layers || '[]');
+
+  const $source = document.getElementById('source')!;
+  const $dropZone = document.getElementById('drop-zone')!;
+  const $feedback = document.getElementById('feedback')!;
+  const $feedbackResult = document.getElementById('feedback-result')!;
+  const $feedbackDetail = document.getElementById('feedback-detail')!;
+  const $explanation = document.getElementById('explanation-panel')!;
+
+  let selectedCard: HTMLElement | null = null;
+  let placements: (string | null)[] = new Array(layers.length).fill(null);
+
+  function shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function init() {
+    placements = new Array(layers.length).fill(null);
+    $source.innerHTML = '';
+    $explanation.classList.add('hidden');
+    $feedback.classList.add('hidden');
+
+    // Reset slots
+    $dropZone.querySelectorAll('.drop-slot').forEach(slot => {
+      const s = slot as HTMLElement;
+      s.className = 'drop-slot border-2 border-dashed border-[var(--color-border)] rounded-lg h-16 flex items-center justify-center text-sm text-[var(--color-text-secondary)] transition-all duration-200';
+      const slotIdx = parseInt(s.dataset.slot || '0');
+      s.innerHTML = `<span class="slot-label">${slotIdx + 1}</span>`;
+    });
+
+    const shuffled = shuffle(layers);
+    shuffled.forEach((layer: any) => {
+      const card = document.createElement('div');
+      card.className = 'layer-card';
+      card.draggable = true;
+      card.dataset.layerId = layer.id;
+      card.innerHTML = `
+        <p class="text-sm font-medium">${layer.label}</p>
+        <p class="text-xs text-[var(--color-text-secondary)]">${layer.subtitle}</p>
+      `;
+
+      // Drag events
+      card.addEventListener('dragstart', (e) => {
+        card.classList.add('dragging');
+        e.dataTransfer!.setData('text/plain', layer.id);
+        e.dataTransfer!.effectAllowed = 'move';
+      });
+      card.addEventListener('dragend', () => card.classList.remove('dragging'));
+
+      // Click to select
+      card.addEventListener('click', () => {
+        if (card.classList.contains('placed')) return;
+        if (selectedCard === card) {
+          card.classList.remove('selected');
+          selectedCard = null;
+        } else {
+          $source.querySelectorAll('.layer-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectedCard = card;
+        }
+      });
+
+      $source.appendChild(card);
+    });
+  }
+
+  // Drop zone events
+  $dropZone.querySelectorAll('.drop-slot').forEach(slot => {
+    const s = slot as HTMLElement;
+
+    s.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer!.dropEffect = 'move';
+      s.classList.add('over');
+    });
+
+    s.addEventListener('dragleave', () => s.classList.remove('over'));
+
+    s.addEventListener('drop', (e) => {
+      e.preventDefault();
+      s.classList.remove('over');
+      const layerId = e.dataTransfer!.getData('text/plain');
+      placeLayer(layerId, parseInt(s.dataset.slot || '0'));
+    });
+
+    // Click to place selected card
+    s.addEventListener('click', () => {
+      const slotIdx = parseInt(s.dataset.slot || '0');
+      if (s.classList.contains('filled')) {
+        // Remove layer from slot
+        const layerId = placements[slotIdx];
+        if (layerId) {
+          placements[slotIdx] = null;
+          s.classList.remove('filled');
+          s.innerHTML = `<span class="slot-label">${slotIdx + 1}</span>`;
+          // Un-place the card
+          const card = $source.querySelector(`[data-layer-id="${layerId}"]`) as HTMLElement;
+          if (card) card.classList.remove('placed');
+        }
+        return;
+      }
+      if (selectedCard) {
+        placeLayer(selectedCard.dataset.layerId!, slotIdx);
+        selectedCard.classList.remove('selected');
+        selectedCard = null;
+      }
+    });
+  });
+
+  function placeLayer(layerId: string, slotIdx: number) {
+    // If slot already filled, swap back
+    if (placements[slotIdx]) {
+      const oldId = placements[slotIdx];
+      const oldCard = $source.querySelector(`[data-layer-id="${oldId}"]`) as HTMLElement;
+      if (oldCard) oldCard.classList.remove('placed');
+    }
+
+    placements[slotIdx] = layerId;
+    const layer = layers.find((l: any) => l.id === layerId);
+    const slot = $dropZone.querySelector(`[data-slot="${slotIdx}"]`) as HTMLElement;
+
+    slot.classList.add('filled');
+    slot.innerHTML = `
+      <div class="text-center">
+        <p class="text-sm font-medium">${layer.label}</p>
+        <p class="text-xs text-[var(--color-text-secondary)]">${layer.subtitle}</p>
+      </div>
+    `;
+
+    const card = $source.querySelector(`[data-layer-id="${layerId}"]`) as HTMLElement;
+    if (card) card.classList.add('placed');
+  }
+
+  document.getElementById('check-btn')!.addEventListener('click', () => {
+    if (placements.some(p => p === null)) {
+      $feedbackResult.textContent = 'Plaats eerst alle lagen!';
+      $feedbackResult.style.color = 'var(--color-accent-ochre)';
+      $feedbackDetail.textContent = '';
+      $feedback.className = 'mt-6 py-4';
+      $feedback.classList.remove('hidden');
+      return;
+    }
+
+    let correct = 0;
+    const slots = $dropZone.querySelectorAll('.drop-slot');
+    slots.forEach((slot, i) => {
+      const s = slot as HTMLElement;
+      const placedId = placements[i];
+      const expected = layers.find((l: any) => l.order === i + 1);
+      s.classList.remove('correct', 'incorrect');
+      if (placedId === expected.id) {
+        s.classList.add('correct');
+        correct++;
+      } else {
+        s.classList.add('incorrect');
+      }
+    });
+
+    if (correct === layers.length) {
+      $feedbackResult.textContent = 'Perfect! Alle lagen staan in de juiste volgorde.';
+      $feedbackResult.style.color = 'var(--color-accent-sage)';
+      $feedback.className = 'feedback-correct mt-6 py-4';
+      $feedbackDetail.textContent = 'Dit is hoe het Layered System principe werkt — elke laag heeft zijn eigen verantwoordelijkheid.';
+      $explanation.classList.remove('hidden');
+    } else {
+      $feedbackResult.textContent = `${correct} van ${layers.length} lagen correct.`;
+      $feedbackResult.style.color = 'var(--color-accent-rust)';
+      $feedback.className = 'feedback-incorrect mt-6 py-4';
+      $feedbackDetail.textContent = 'De groene lagen staan goed, de rode niet. Denk na over de volgorde waarin een request verwerkt wordt.';
+    }
+    $feedback.classList.remove('hidden');
+  });
+
+  document.getElementById('reset-btn')!.addEventListener('click', init);
+
+  init();
+</script>

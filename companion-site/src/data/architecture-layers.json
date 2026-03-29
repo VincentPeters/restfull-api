@@ -1,0 +1,46 @@
+{
+  "layers": [
+    {
+      "id": "client",
+      "label": "Client",
+      "subtitle": "Browser, App of Node-RED",
+      "description": "De client stuurt HTTP-requests naar de API. Dit kan een webbrowser, mobiele app, Python script of Node-RED flow zijn.",
+      "order": 1
+    },
+    {
+      "id": "load-balancer",
+      "label": "Load Balancer",
+      "subtitle": "Verkeersverdeling",
+      "description": "Verdeelt inkomende requests over meerdere servers om de belasting te spreiden en beschikbaarheid te garanderen.",
+      "order": 2
+    },
+    {
+      "id": "api-gateway",
+      "label": "API Gateway",
+      "subtitle": "Rate Limiting & Routing",
+      "description": "Controleert rate limits (bijv. max 100 requests/min), valideert API keys en routeert requests naar de juiste service.",
+      "order": 3
+    },
+    {
+      "id": "auth-server",
+      "label": "Authenticatie Server",
+      "subtitle": "JWT & Rechten",
+      "description": "Verifieert JWT tokens, controleert gebruikersrechten en bepaalt of de client toegang heeft tot de gevraagde resource.",
+      "order": 4
+    },
+    {
+      "id": "app-server",
+      "label": "Applicatie Server",
+      "subtitle": "Business Logic",
+      "description": "Verwerkt de request, voert de business logic uit en haalt de gevraagde data op. Dit is het hart van de API.",
+      "order": 5
+    },
+    {
+      "id": "database",
+      "label": "Database",
+      "subtitle": "Data Opslag",
+      "description": "Slaat alle data persistent op. De applicatieserver communiceert met de database om resources te lezen, schrijven, updaten of verwijderen.",
+      "order": 6
+    }
+  ]
+}

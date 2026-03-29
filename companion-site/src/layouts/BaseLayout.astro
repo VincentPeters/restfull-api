@@ -1,0 +1,133 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  breadcrumbs?: { label: string; href?: string }[];
+}
+
+const { title, breadcrumbs } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { label: 'Naslagwerk', href: '/naslagwerk' },
+  { label: 'REST Quiz', href: '/oefeningen/rest-quiz' },
+  { label: 'Architectuur', href: '/oefeningen/architectuur' },
+  { label: 'URI Spotter', href: '/oefeningen/uri-spotter' },
+  { label: 'URI Builder', href: '/oefeningen/uri-builder' },
+  { label: 'JSON Explorer', href: '/oefeningen/json-explorer' },
+];
+---
+
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactief compendium bij de RESTful API cursus — KdG" />
+    <title>{title} — RESTful API Compendium</title>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="border-b border-[var(--color-border)] bg-[var(--color-bg-primary)] sticky top-0 z-10">
+      <div class="max-w-5xl mx-auto px-6 py-4 flex items-baseline justify-between gap-6">
+        <a href="/" class="no-underline shrink-0">
+          <span class="text-xl font-normal tracking-tight text-[var(--color-text-primary)] hover:text-[var(--color-accent-rust)]" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">
+            RESTful API Compendium
+          </span>
+        </a>
+        <!-- Desktop nav -->
+        <div class="hidden lg:flex items-center gap-6 text-sm">
+          {navLinks.map((link) => (
+            <a
+              href={link.href}
+              class:list={[
+                'transition-colors duration-200 whitespace-nowrap',
+                currentPath.startsWith(link.href)
+                  ? 'text-[var(--color-accent-rust)] font-medium'
+                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+              ]}
+            >
+              {link.label}
+            </a>
+          ))}
+          <a href="https://kdg-gaming-api.me-945.workers.dev/docs" target="_blank" rel="noopener" class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)] transition-colors duration-200 whitespace-nowrap">
+            Gaming API ↗
+          </a>
+        </div>
+        <!-- Mobile hamburger -->
+        <button id="mobile-menu-btn" class="lg:hidden text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] cursor-pointer" aria-label="Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden lg:hidden border-t border-[var(--color-border)] bg-[var(--color-bg-primary)]">
+        <div class="max-w-5xl mx-auto px-6 py-3 flex flex-col gap-2">
+          {navLinks.map((link) => (
+            <a
+              href={link.href}
+              class:list={[
+                'py-2 text-sm transition-colors duration-200',
+                currentPath.startsWith(link.href)
+                  ? 'text-[var(--color-accent-rust)] font-medium'
+                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+              ]}
+            >
+              {link.label}
+            </a>
+          ))}
+          <a href="https://kdg-gaming-api.me-945.workers.dev/docs" target="_blank" rel="noopener" class="py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)] transition-colors duration-200">
+            Gaming API ↗
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Breadcrumbs -->
+    {breadcrumbs && breadcrumbs.length > 0 && (
+      <div class="max-w-5xl mx-auto px-6 pt-4">
+        <div class="flex gap-2 text-xs text-[var(--color-text-secondary)]">
+          <a href="/" class="hover:text-[var(--color-accent-rust)] transition-colors">Home</a>
+          {breadcrumbs.map((crumb) => (
+            <>
+              <span>/</span>
+              {crumb.href ? (
+                <a href={crumb.href} class="hover:text-[var(--color-accent-rust)] transition-colors">{crumb.label}</a>
+              ) : (
+                <span class="text-[var(--color-text-primary)]">{crumb.label}</span>
+              )}
+            </>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-5xl mx-auto px-6 py-10 w-full">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--color-border)] mt-auto">
+      <div class="max-w-5xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--color-text-secondary)]">
+        <span>
+          Gemaakt voor KdG door
+          <a href="https://vinnie.studio" target="_blank" rel="noopener" class="hover:text-[var(--color-accent-rust)] transition-colors">
+            Studio Vinnie
+          </a>
+        </span>
+        <a href="https://kdg-gaming-api.me-945.workers.dev/docs" target="_blank" rel="noopener" class="hover:text-[var(--color-accent-rust)] transition-colors">
+          Gaming API Docs ↗
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      const btn = document.getElementById('mobile-menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+    </script>
+  </body>
+</html>

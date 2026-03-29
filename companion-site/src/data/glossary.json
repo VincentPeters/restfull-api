@@ -1,0 +1,70 @@
+{
+  "terms": [
+    {"term": "API", "definition": "Application Programming Interface — een set regels waarmee softwaretoepassingen met elkaar communiceren."},
+    {"term": "REST", "definition": "Representational State Transfer — een architectuurstijl voor het ontwerpen van netwerktoepassingen met vijf kernprincipes."},
+    {"term": "RESTful", "definition": "Een API die de REST-principes correct toepast wordt RESTful genoemd."},
+    {"term": "URI", "definition": "Uniform Resource Identifier — het adres waarmee een resource op de server wordt aangesproken (bijv. /games/123)."},
+    {"term": "URL", "definition": "Uniform Resource Locator — een volledig webadres inclusief protocol en domein (bijv. https://api.example.com/games)."},
+    {"term": "Resource", "definition": "Een object of stuk data dat via de API beschikbaar is, zoals een game, developer of review."},
+    {"term": "Endpoint", "definition": "Een specifiek adres (URI) waarop de API luistert naar requests (bijv. /games, /developers/:id)."},
+    {"term": "HTTP", "definition": "HyperText Transfer Protocol — het protocol waarmee clients en servers communiceren op het web."},
+    {"term": "HTTPS", "definition": "HTTP Secure — de versleutelde versie van HTTP, beveiligd met SSL/TLS."},
+    {"term": "JSON", "definition": "JavaScript Object Notation — een lichtgewicht dataformaat voor het uitwisselen van gestructureerde data."},
+    {"term": "Client", "definition": "De applicatie die requests stuurt naar de API (browser, app, script, Postman)."},
+    {"term": "Server", "definition": "De computer/applicatie die requests ontvangt, verwerkt en responses terugstuurt."},
+    {"term": "Request", "definition": "Een verzoek van de client aan de server, bestaande uit een methode, URI, headers en optioneel een body."},
+    {"term": "Response", "definition": "Het antwoord van de server op een request, bestaande uit een statuscode, headers en optioneel een body."},
+    {"term": "Header", "definition": "Metadata die bij een request of response wordt meegestuurd (bijv. Content-Type, Authorization, Cache-Control)."},
+    {"term": "Body", "definition": "De inhoud van een request (data die je verstuurt) of response (data die je terugkrijgt), meestal in JSON-formaat."},
+    {"term": "Query Parameter", "definition": "Extra informatie in de URL na het vraagteken voor filtering, sortering of paginering (bijv. ?genre=rpg&page=2)."},
+    {"term": "Path Parameter", "definition": "Een variabel deel in het URI-pad dat een specifieke resource identificeert (bijv. /games/:id waar :id = 123)."},
+    {"term": "Stateless", "definition": "De server bewaart geen informatie over eerdere requests. Elke request moet alle nodige informatie bevatten."},
+    {"term": "Cacheable", "definition": "De server kan aangeven hoe lang een response geldig is, zodat de client deze kan hergebruiken zonder opnieuw te vragen."},
+    {"term": "JWT", "definition": "JSON Web Token — een compacte, zelfstandige token voor het veilig overdragen van informatie tussen client en server."},
+    {"term": "Bearer Token", "definition": "Een authenticatiemethode waarbij de client een token meestuurt in de Authorization header: 'Bearer eyJhbGc...'."},
+    {"term": "API Key", "definition": "Een unieke sleutel die de client meestuurt om zich te identificeren bij de API."},
+    {"term": "CRUD", "definition": "Create, Read, Update, Delete — de vier basisbewerkingen op resources, gekoppeld aan POST, GET, PUT/PATCH, DELETE."},
+    {"term": "Idempotent", "definition": "Een operatie die hetzelfde resultaat geeft, ongeacht hoe vaak je deze uitvoert. GET, PUT en DELETE zijn idempotent."},
+    {"term": "cURL", "definition": "Client URL — een command-line tool voor het versturen van HTTP-requests."},
+    {"term": "Postman", "definition": "Een GUI-applicatie voor het bouwen, testen en documenteren van API's."},
+    {"term": "Load Balancer", "definition": "Een tussenlaag die inkomende requests verdeelt over meerdere servers voor betere prestaties en beschikbaarheid."},
+    {"term": "API Gateway", "definition": "Een tussenlaag die authenticatie, rate limiting en routing afhandelt voordat requests de applicatieserver bereiken."},
+    {"term": "Rate Limiting", "definition": "Het beperken van het aantal requests dat een client binnen een bepaalde tijd mag doen (bijv. 100 requests/minuut)."}
+  ],
+  "httpMethods": [
+    {"method": "GET", "description": "Haal een resource of collectie op. Verandert niets op de server.", "crud": "Read", "idempotent": true},
+    {"method": "POST", "description": "Maak een nieuwe resource aan. De server bepaalt het ID.", "crud": "Create", "idempotent": false},
+    {"method": "PUT", "description": "Vervang een bestaande resource volledig door de meegestuurde data.", "crud": "Update (volledig)", "idempotent": true},
+    {"method": "PATCH", "description": "Werk een bestaande resource gedeeltelijk bij met alleen de gewijzigde velden.", "crud": "Update (gedeeltelijk)", "idempotent": true},
+    {"method": "DELETE", "description": "Verwijder een resource van de server.", "crud": "Delete", "idempotent": true}
+  ],
+  "statusCodes": [
+    {"code": 200, "label": "OK", "description": "Het request is succesvol verwerkt.", "category": "success"},
+    {"code": 201, "label": "Created", "description": "Een nieuwe resource is succesvol aangemaakt (na een POST).", "category": "success"},
+    {"code": 204, "label": "No Content", "description": "Het request is succesvol maar er is geen response body (vaak bij DELETE).", "category": "success"},
+    {"code": 400, "label": "Bad Request", "description": "Het request bevat ongeldige data (bijv. ontbrekende velden, verkeerd formaat).", "category": "client-error"},
+    {"code": 401, "label": "Unauthorized", "description": "De client is niet geauthenticeerd — API key of token ontbreekt of is ongeldig.", "category": "client-error"},
+    {"code": 403, "label": "Forbidden", "description": "De client is geauthenticeerd maar heeft geen rechten voor deze resource.", "category": "client-error"},
+    {"code": 404, "label": "Not Found", "description": "De gevraagde resource bestaat niet op de server.", "category": "client-error"},
+    {"code": 405, "label": "Method Not Allowed", "description": "De HTTP-methode is niet toegestaan voor dit endpoint.", "category": "client-error"},
+    {"code": 429, "label": "Too Many Requests", "description": "De client heeft de rate limit overschreden.", "category": "client-error"},
+    {"code": 500, "label": "Internal Server Error", "description": "Er is een onverwachte fout opgetreden op de server.", "category": "server-error"}
+  ],
+  "restPrinciples": [
+    {"name": "Uniform Interface", "description": "Alle resources worden via dezelfde, voorspelbare regels aangesproken met standaard HTTP-methoden en consistente URL-structuren."},
+    {"name": "Client-Server", "description": "Client en server zijn volledig gescheiden. De server levert alleen data, de client bepaalt de presentatie."},
+    {"name": "Stateless", "description": "De server bewaart geen informatie over eerdere requests. Elke request bevat alle nodige informatie (zoals een token)."},
+    {"name": "Cacheable", "description": "De API geeft aan hoe lang responses geldig zijn, zodat clients data tijdelijk kunnen bewaren voor betere prestaties."},
+    {"name": "Layered System", "description": "De architectuur kan uit meerdere lagen bestaan (load balancer, gateway, server). De client merkt hier niets van."}
+  ],
+  "uriRules": [
+    {"rule": "Gebruik zelfstandige naamwoorden, geen werkwoorden", "good": "/games", "bad": "/getGames"},
+    {"rule": "Gebruik meervoudsvorm voor collecties", "good": "/customers", "bad": "/customer"},
+    {"rule": "Gebruik van ID voor specifieke resources", "good": "/customers/1234", "bad": "/customers?id=1234"},
+    {"rule": "Gebruik kleine letters", "good": "/products", "bad": "/Products"},
+    {"rule": "Gebruik koppeltekens (-) voor woorden", "good": "/shipping-addresses", "bad": "/shipping_addresses"},
+    {"rule": "Gebruik hiërarchie voor relaties", "good": "/users/123/orders", "bad": "/orders?userId=123"},
+    {"rule": "Gebruik query parameters voor filtering", "good": "/products?category=electronics", "bad": "/electronics-products"},
+    {"rule": "Consistentie in de gehele API", "good": "/games, /developers, /reviews", "bad": "/game, /Developers, /REVIEWS"}
+  ]
+}

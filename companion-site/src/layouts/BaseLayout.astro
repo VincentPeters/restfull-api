@@ -72,6 +72,17 @@ const isExercisePage = currentPath.includes('/oefeningen/');
           >
             URI-naamgeving
           </a>
+          <a
+            href={`${base}/api-clients`}
+            class:list={[
+              'transition-colors duration-200 whitespace-nowrap',
+              currentPath.includes('/api-clients')
+                ? 'text-[var(--color-accent-rust)] font-medium'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+            ]}
+          >
+            API Clients
+          </a>
           <!-- Exercises dropdown -->
           <div class="relative" id="exercises-dropdown">
             <button
@@ -150,6 +161,17 @@ const isExercisePage = currentPath.includes('/oefeningen/');
             ]}
           >
             URI-naamgeving
+          </a>
+          <a
+            href={`${base}/api-clients`}
+            class:list={[
+              'py-2 text-sm transition-colors duration-200',
+              currentPath.includes('/api-clients')
+                ? 'text-[var(--color-accent-rust)] font-medium'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+            ]}
+          >
+            API Clients
           </a>
           <span class="pt-2 pb-1 text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wider">Oefeningen</span>
           {exerciseLinks.map((link) => (

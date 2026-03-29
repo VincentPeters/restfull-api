@@ -5,18 +5,6 @@ const base = import.meta.env.BASE_URL;
 
 const chapters = [
   {
-    label: 'Referentie',
-    exercises: [
-      {
-        title: 'Naslagwerk',
-        description: 'HTTP-methoden, statuscodes, URI-regels en REST-principes op één plek.',
-        href: `${base}/naslagwerk`,
-        accent: 'var(--color-accent-sage)',
-        span: 'large',
-      },
-    ],
-  },
-  {
     label: 'Hoofdstuk 1: REST-principes',
     exercises: [
       {
@@ -25,6 +13,7 @@ const chapters = [
         href: `${base}/principes`,
         accent: 'var(--color-accent-ochre)',
         span: 'large',
+        type: 'theorie',
       },
       {
         title: 'REST Quiz',
@@ -32,6 +21,7 @@ const chapters = [
         href: `${base}/oefeningen/rest-quiz`,
         accent: 'var(--color-accent-sage)',
         span: 'small',
+        type: 'oefening',
       },
       {
         title: 'Architectuur Builder',
@@ -39,6 +29,7 @@ const chapters = [
         href: `${base}/oefeningen/architectuur`,
         accent: 'var(--color-accent-rust)',
         span: 'small',
+        type: 'oefening',
       },
     ],
   },
@@ -51,6 +42,7 @@ const chapters = [
         href: `${base}/uri-naamgeving`,
         accent: 'var(--color-accent-ochre)',
         span: 'large',
+        type: 'theorie',
       },
       {
         title: 'URI Spotter',
@@ -58,6 +50,7 @@ const chapters = [
         href: `${base}/oefeningen/uri-spotter`,
         accent: 'var(--color-accent-ochre)',
         span: 'small',
+        type: 'oefening',
       },
       {
         title: 'URI Builder',
@@ -65,6 +58,7 @@ const chapters = [
         href: `${base}/oefeningen/uri-builder`,
         accent: 'var(--color-accent-rust)',
         span: 'small',
+        type: 'oefening',
       },
     ],
   },
@@ -72,11 +66,25 @@ const chapters = [
     label: 'Hoofdstuk 3: API-clients',
     exercises: [
       {
-        title: 'JSON Explorer',
-        description: 'Verken live API-responses van de Gaming API en beantwoord uitdagingen.',
-        href: `${base}/oefeningen/json-explorer`,
+        title: 'API Clients',
+        description: 'Leer hoe je een API aanspreekt met cURL, Postman en Python.',
+        href: `${base}/api-clients`,
         accent: 'var(--color-accent-ochre)',
         span: 'large',
+        type: 'theorie',
+      },
+    ],
+  },
+  {
+    label: 'Referentie',
+    exercises: [
+      {
+        title: 'Naslagwerk',
+        description: 'HTTP-methoden, statuscodes, URI-regels en REST-principes op één plek.',
+        href: `${base}/naslagwerk`,
+        accent: 'var(--color-accent-sage)',
+        span: 'large',
+        type: 'referentie',
       },
     ],
   },
@@ -124,6 +132,14 @@ const chapters = [
                   <h3 class="text-lg font-medium" style="font-family: var(--font-display); font-variation-settings: 'opsz' 36;">
                     {ex.title}
                   </h3>
+                  <span class:list={[
+                    'text-[10px] font-medium tracking-wide uppercase px-2 py-0.5 rounded-full',
+                    ex.type === 'theorie' && 'bg-[var(--color-accent-ochre)]/10 text-[var(--color-accent-ochre)]',
+                    ex.type === 'oefening' && 'bg-[var(--color-accent-sage)]/10 text-[var(--color-accent-sage)]',
+                    ex.type === 'referentie' && 'bg-[var(--color-accent-rust)]/10 text-[var(--color-accent-rust)]',
+                  ]} style="font-family: var(--font-code);">
+                    {ex.type}
+                  </span>
                 </div>
                 <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed pl-5">
                   {ex.description}

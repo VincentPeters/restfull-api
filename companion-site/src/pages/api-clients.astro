@@ -1,0 +1,430 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="API Clients" breadcrumbs={[{ label: "API Clients" }]}>
+
+  <header class="mb-16 pt-4">
+    <p class="text-xs font-medium tracking-wide uppercase text-[var(--color-accent-rust)] mb-3" style="font-family: var(--font-code);">Hoofdstuk 3</p>
+    <h1 class="mb-5">API Clients</h1>
+    <p class="text-[var(--color-text-secondary)] max-w-2xl text-lg leading-relaxed">
+      Een API kun je op verschillende manieren aanspreken. Hier bekijken we drie
+      tools die je als developer het vaakst tegenkomt: <strong>cURL</strong> in de terminal,
+      <strong>Postman</strong> als visuele tool, en <strong>Python</strong> vanuit code.
+    </p>
+  </header>
+
+  <!-- Quick nav pills -->
+  <nav class="mb-16 flex flex-wrap gap-2" aria-label="Clients">
+    {['cURL', 'Postman', 'Python'].map((name, i) => (
+      <a
+        href={`#client-${i + 1}`}
+        class="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent-rust)] hover:text-[var(--color-accent-rust)] transition-colors duration-200"
+      >
+        <span class="w-5 h-5 flex items-center justify-center rounded-full bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-[10px] font-medium" style="font-family: var(--font-code);">{i + 1}</span>
+        {name}
+      </a>
+    ))}
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       CLIENT 1 — cURL
+       ═══════════════════════════════════════════ -->
+  <section id="client-1" class="client-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="client-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">1</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">cURL</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Command-line tool voor HTTP requests</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          cURL staat voor <em>client URL</em>. Het is een command-line tool waarmee je
+          HTTP requests kunt versturen vanuit je terminal. Op de meeste systemen (Mac, Linux, Windows)
+          staat cURL al voorgeinstalleerd. Je hoeft dus niets extra te downloaden.
+        </p>
+        <p class="mb-4 leading-relaxed">
+          Het voordeel van cURL: het is snel, lichtgewicht en je kunt het gebruiken
+          in scripts. Het nadeel: je ziet alleen ruwe tekst, geen mooie interface.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          cURL ondersteunt niet alleen HTTP, maar ook FTP, SMTP en nog zo'n 25 andere
+          protocollen. Voor deze cursus gebruiken we alleen HTTP.
+        </p>
+      </div>
+
+      <!-- Visual: terminal with curl command -->
+      <div class="bg-[var(--color-bg-code)] rounded-xl p-6 overflow-hidden" role="img" aria-label="Terminal met cURL commando en JSON response">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-3 h-3 rounded-full bg-[#C4573A] opacity-60"></span>
+          <span class="w-3 h-3 rounded-full bg-[#D4A843] opacity-60"></span>
+          <span class="w-3 h-3 rounded-full bg-[#5B7B6A] opacity-60"></span>
+          <span class="ml-2 text-[10px] text-[#6B6560]" style="font-family: var(--font-code);">Terminal</span>
+        </div>
+        <div class="space-y-3 text-[12px]" style="font-family: var(--font-code);">
+          <div>
+            <span class="text-[var(--color-accent-sage)]">$</span>
+            <span class="text-[#F7F3EE]"> curl https://randomuser.me/api/</span>
+          </div>
+          <div class="pl-2 text-[11px] text-[#A89F94] leading-relaxed">
+            <span class="text-[#6B6560]">{'{"'}</span><span class="text-[var(--color-accent-ochre)]">results</span><span class="text-[#6B6560]">{'": [{"'}</span><span class="text-[var(--color-accent-ochre)]">name</span><span class="text-[#6B6560]">{'": {'}</span><br/>
+            <span class="pl-4 text-[#6B6560]">"</span><span class="text-[var(--color-accent-ochre)]">first</span><span class="text-[#6B6560]">": "</span><span class="text-[var(--color-accent-sage)]">John</span><span class="text-[#6B6560]">",</span><br/>
+            <span class="pl-4 text-[#6B6560]">"</span><span class="text-[var(--color-accent-ochre)]">last</span><span class="text-[#6B6560]">": "</span><span class="text-[var(--color-accent-sage)]">Doe</span><span class="text-[#6B6560]">"</span><br/>
+            <span class="text-[#6B6560]">{'}, "'}</span><span class="text-[var(--color-accent-ochre)]">email</span><span class="text-[#6B6560]">{'": "'}</span><span class="text-[var(--color-accent-sage)]">john@example.com</span><span class="text-[#6B6560]">"</span><br/>
+            <span class="text-[#6B6560]">{'}]}'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Common commands -->
+    <div class="mt-8 bg-[var(--color-bg-secondary)] rounded-xl p-6">
+      <p class="text-sm font-medium mb-4" style="font-family: var(--font-display);">Veelgebruikte cURL commando's</p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        {[
+          { cmd: 'curl https://api.example.com/games', desc: 'GET request (standaard)' },
+          { cmd: 'curl -X POST -d \'{"title":"Hades"}\' -H "Content-Type: application/json" https://api.example.com/games', desc: 'POST met JSON body' },
+          { cmd: 'curl -X DELETE https://api.example.com/games/42', desc: 'DELETE request' },
+          { cmd: 'curl -v https://api.example.com/games', desc: 'Verbose: toon headers en details' },
+        ].map(({ cmd, desc }) => (
+          <div class="specimen rounded-lg p-3">
+            <p class="text-[10px] text-[#6B6560] mb-1.5">{desc}</p>
+            <code class="text-[11px] text-[#F7F3EE] break-all" style="font-family: var(--font-code);">{cmd}</code>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernpunt:</strong> cURL is de snelste manier om een API te testen vanuit je terminal. Geen installatie nodig.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CLIENT 2 — POSTMAN
+       ═══════════════════════════════════════════ -->
+  <section id="client-2" class="client-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="client-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">2</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Postman</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Visuele tool voor het testen van API's</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Postman is een desktop-app met een grafische interface voor het versturen van
+          HTTP requests. Je kiest een methode (GET, POST, PUT, DELETE), vult een URL in,
+          en klikt op "Send". De response verschijnt direct in een leesbaar formaat.
+        </p>
+        <p class="mb-4 leading-relaxed">
+          Het grote voordeel: je ziet de statuscode, headers en body overzichtelijk naast
+          elkaar. Dat maakt debuggen makkelijker dan met ruwe terminal-output.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Download Postman gratis op
+          <a href="https://www.postman.com/downloads/" target="_blank" rel="noopener" class="text-[var(--color-accent-rust)] hover:underline">postman.com/downloads</a>.
+        </p>
+      </div>
+
+      <!-- Visual: Postman-like interface -->
+      <div class="relative" role="img" aria-label="Postman interface met request en response">
+        <svg viewBox="0 0 440 320" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <!-- Window frame -->
+          <rect x="10" y="10" width="420" height="300" rx="12" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
+          <!-- Title bar -->
+          <rect x="10" y="10" width="420" height="32" rx="12" fill="#D6D0C8"/>
+          <rect x="10" y="30" width="420" height="12" fill="#D6D0C8"/>
+          <circle cx="30" cy="26" r="5" fill="#C4573A" opacity="0.6"/>
+          <circle cx="46" cy="26" r="5" fill="#D4A843" opacity="0.6"/>
+          <circle cx="62" cy="26" r="5" fill="#5B7B6A" opacity="0.6"/>
+          <text x="220" y="30" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-code)">Postman</text>
+
+          <!-- Method selector + URL bar -->
+          <rect x="24" y="52" width="60" height="28" rx="6" fill="#5B7B6A" opacity="0.15" stroke="#5B7B6A" stroke-width="1"/>
+          <text x="54" y="70" text-anchor="middle" fill="#5B7B6A" font-size="11" font-weight="600" font-family="var(--font-code)">GET</text>
+
+          <rect x="90" y="52" width="270" height="28" rx="6" fill="#F7F3EE" stroke="#D6D0C8" stroke-width="1"/>
+          <text x="100" y="70" fill="#6B6560" font-size="9" font-family="var(--font-code)">https://uselessfacts.jsph.pl/random.json</text>
+
+          <rect x="366" y="52" width="50" height="28" rx="6" fill="#D4A843" opacity="0.2" stroke="#D4A843" stroke-width="1"/>
+          <text x="391" y="70" text-anchor="middle" fill="#D4A843" font-size="9" font-weight="600" font-family="var(--font-code)">Send</text>
+
+          <!-- Tabs -->
+          <text x="34" y="102" fill="#6B6560" font-size="8" font-family="var(--font-code)">Params</text>
+          <text x="80" y="102" fill="#6B6560" font-size="8" font-family="var(--font-code)">Headers</text>
+          <text x="130" y="102" fill="#6B6560" font-size="8" font-family="var(--font-code)">Body</text>
+
+          <!-- Divider -->
+          <line x1="24" y1="112" x2="416" y2="112" stroke="#D6D0C8" stroke-width="1"/>
+
+          <!-- Response section -->
+          <text x="34" y="128" fill="#5B7B6A" font-size="9" font-weight="600" font-family="var(--font-code)">200 OK</text>
+          <text x="90" y="128" fill="#6B6560" font-size="8" font-family="var(--font-code)">142ms</text>
+          <text x="130" y="128" fill="#6B6560" font-size="8" font-family="var(--font-code)">256 B</text>
+
+          <!-- Response tabs -->
+          <text x="34" y="148" fill="#D4A843" font-size="8" font-weight="600" font-family="var(--font-code)">Body</text>
+          <text x="70" y="148" fill="#6B6560" font-size="8" font-family="var(--font-code)">Headers (6)</text>
+
+          <!-- JSON response -->
+          <rect x="24" y="156" width="392" height="140" rx="6" fill="#2D2A26"/>
+          <text x="34" y="174" fill="#6B6560" font-size="9" font-family="var(--font-code)">{'{'}</text>
+          <text x="46" y="190" fill="#D4A843" font-size="9" font-family="var(--font-code)">"id"</text>
+          <text x="72" y="190" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
+          <text x="80" y="190" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"98c8b13"</text>
+          <text x="46" y="206" fill="#D4A843" font-size="9" font-family="var(--font-code)">"text"</text>
+          <text x="80" y="206" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
+          <text x="90" y="206" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"A bolt of lightning..."</text>
+          <text x="46" y="222" fill="#D4A843" font-size="9" font-family="var(--font-code)">"source"</text>
+          <text x="96" y="222" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
+          <text x="104" y="222" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"internet"</text>
+          <text x="46" y="238" fill="#D4A843" font-size="9" font-family="var(--font-code)">"language"</text>
+          <text x="110" y="238" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
+          <text x="118" y="238" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"en"</text>
+          <text x="34" y="254" fill="#6B6560" font-size="9" font-family="var(--font-code)">{'}'}</text>
+
+          <!-- Status bar -->
+          <rect x="24" y="274" width="392" height="20" rx="4" fill="#D6D0C8" opacity="0.5"/>
+          <text x="34" y="288" fill="#6B6560" font-size="7" font-family="var(--font-code)">Status: 200 OK  |  Time: 142ms  |  Size: 256 B</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <div class="mt-8 bg-[var(--color-bg-secondary)] rounded-xl p-6">
+      <p class="text-sm font-medium mb-4" style="font-family: var(--font-display);">Een request versturen in Postman</p>
+      <div class="grid sm:grid-cols-4 gap-4">
+        {[
+          { step: '1', text: 'Open Postman en maak een nieuw request aan' },
+          { step: '2', text: 'Kies de HTTP-methode (GET, POST, PUT, DELETE)' },
+          { step: '3', text: 'Vul de URL in en voeg eventueel headers of body toe' },
+          { step: '4', text: 'Klik op Send en bekijk de response' },
+        ].map(({ step, text }) => (
+          <div class="flex gap-3 items-start">
+            <span class="shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-xs" style="font-family: var(--font-code);">{step}</span>
+            <p class="text-sm text-[var(--color-text-secondary)]">{text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernpunt:</strong> Postman toont statuscode, headers en body overzichtelijk naast elkaar. Handig voor het debuggen van API-problemen.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CLIENT 3 — PYTHON
+       ═══════════════════════════════════════════ -->
+  <section id="client-3" class="client-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="client-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">3</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Python</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">HTTP requests vanuit code</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Met Python kun je HTTP requests versturen vanuit je code. Dat is handig als je
+          API-data automatisch wilt verwerken, opslaan of doorsturen. De meestgebruikte
+          library hiervoor is <code class="text-sm px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">requests</code>.
+        </p>
+        <p class="mb-4 leading-relaxed">
+          Het verschil met cURL en Postman: je kunt de response direct gebruiken in je
+          programma. JSON parsen, velden eruit halen, berekeningen doen, resultaten
+          opslaan in een bestand of database.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Installeer de library met <code class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">pip install requests</code>.
+        </p>
+      </div>
+
+      <!-- Visual: Python code -->
+      <div class="bg-[var(--color-bg-code)] rounded-xl p-6 overflow-hidden" role="img" aria-label="Python code voorbeeld met requests library">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="w-3 h-3 rounded-full bg-[#C4573A] opacity-60"></span>
+          <span class="w-3 h-3 rounded-full bg-[#D4A843] opacity-60"></span>
+          <span class="w-3 h-3 rounded-full bg-[#5B7B6A] opacity-60"></span>
+          <span class="ml-2 text-[10px] text-[#6B6560]" style="font-family: var(--font-code);">joke.py</span>
+        </div>
+        <div class="text-[11px] leading-relaxed" style="font-family: var(--font-code);">
+          <div><span class="text-[var(--color-accent-rust)]">import</span> <span class="text-[#F7F3EE]">requests</span></div>
+          <div class="mt-2"><span class="text-[#6B6560]"># Stuur een GET request</span></div>
+          <div><span class="text-[#F7F3EE]">response</span> <span class="text-[#A89F94]">=</span> <span class="text-[#F7F3EE]">requests.</span><span class="text-[var(--color-accent-ochre)]">get</span><span class="text-[#A89F94]">(</span></div>
+          <div class="pl-4"><span class="text-[var(--color-accent-sage)]">'https://official-joke-api.appspot.com/random_joke'</span></div>
+          <div><span class="text-[#A89F94]">)</span></div>
+          <div class="mt-2"><span class="text-[#6B6560]"># Parse de JSON response</span></div>
+          <div><span class="text-[#F7F3EE]">joke</span> <span class="text-[#A89F94]">=</span> <span class="text-[#F7F3EE]">response.</span><span class="text-[var(--color-accent-ochre)]">json</span><span class="text-[#A89F94]">()</span></div>
+          <div class="mt-2"><span class="text-[#6B6560]"># Gebruik de data</span></div>
+          <div><span class="text-[var(--color-accent-ochre)]">print</span><span class="text-[#A89F94]">(</span><span class="text-[var(--color-accent-sage)]">f'</span><span class="text-[var(--color-accent-rust)]">{'{'}</span><span class="text-[#F7F3EE]">joke["setup"]</span><span class="text-[var(--color-accent-rust)]">{'}'}</span><span class="text-[var(--color-accent-sage)]">'</span><span class="text-[#A89F94]">)</span></div>
+          <div><span class="text-[var(--color-accent-ochre)]">print</span><span class="text-[#A89F94]">(</span><span class="text-[var(--color-accent-sage)]">f'</span><span class="text-[var(--color-accent-rust)]">{'{'}</span><span class="text-[#F7F3EE]">joke["punchline"]</span><span class="text-[var(--color-accent-rust)]">{'}'}</span><span class="text-[var(--color-accent-sage)]">'</span><span class="text-[#A89F94]">)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow diagram: code to API to data -->
+    <div class="mt-8">
+      <div class="relative" role="img" aria-label="Flow van Python script naar API naar verwerkte data">
+        <svg viewBox="0 0 700 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <!-- Step 1: Code -->
+          <rect x="10" y="20" width="140" height="60" rx="10" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
+          <text x="80" y="46" text-anchor="middle" fill="#2D2A26" font-size="11" font-family="var(--font-body)" font-weight="500">Python script</text>
+          <text x="80" y="62" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">requests.get(url)</text>
+
+          <!-- Arrow -->
+          <line x1="154" y1="50" x2="210" y2="50" stroke="#D4A843" stroke-width="1.5" stroke-dasharray="6 3"/>
+          <polygon points="210,50 202,45 202,55" fill="#D4A843"/>
+          <text x="182" y="42" text-anchor="middle" fill="#D4A843" font-size="7" font-family="var(--font-code)">HTTP GET</text>
+
+          <!-- Step 2: API -->
+          <rect x="214" y="20" width="140" height="60" rx="10" fill="#2D2A26"/>
+          <text x="284" y="46" text-anchor="middle" fill="#F7F3EE" font-size="11" font-family="var(--font-body)" font-weight="500">API Server</text>
+          <text x="284" y="62" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">200 OK + JSON</text>
+
+          <!-- Arrow -->
+          <line x1="358" y1="50" x2="414" y2="50" stroke="#5B7B6A" stroke-width="1.5" stroke-dasharray="6 3"/>
+          <polygon points="414,50 406,45 406,55" fill="#5B7B6A"/>
+          <text x="386" y="42" text-anchor="middle" fill="#5B7B6A" font-size="7" font-family="var(--font-code)">JSON</text>
+
+          <!-- Step 3: Parse -->
+          <rect x="418" y="20" width="140" height="60" rx="10" fill="#D4A843" opacity="0.1" stroke="#D4A843" stroke-width="1.5"/>
+          <text x="488" y="46" text-anchor="middle" fill="#D4A843" font-size="11" font-family="var(--font-body)" font-weight="500">.json()</text>
+          <text x="488" y="62" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">Python dict</text>
+
+          <!-- Arrow -->
+          <line x1="562" y1="50" x2="618" y2="50" stroke="#C4573A" stroke-width="1.5" stroke-dasharray="6 3"/>
+          <polygon points="618,50 610,45 610,55" fill="#C4573A"/>
+          <text x="590" y="42" text-anchor="middle" fill="#C4573A" font-size="7" font-family="var(--font-code)">data</text>
+
+          <!-- Step 4: Use -->
+          <rect x="622" y="20" width="68" height="60" rx="10" fill="#5B7B6A" opacity="0.1" stroke="#5B7B6A" stroke-width="1.5"/>
+          <text x="656" y="46" text-anchor="middle" fill="#5B7B6A" font-size="10" font-family="var(--font-body)" font-weight="500">print()</text>
+          <text x="656" y="62" text-anchor="middle" fill="#6B6560" font-size="7" font-family="var(--font-code)">opslaan</text>
+          <text x="656" y="72" text-anchor="middle" fill="#6B6560" font-size="7" font-family="var(--font-code)">verwerken</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernpunt:</strong> Python laat je API-data direct verwerken in je code. Handig voor automatisering, data-analyse of het bouwen van eigen apps.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       COMPARISON
+       ═══════════════════════════════════════════ -->
+  <section class="mb-16">
+    <h2 class="mb-6">Wanneer gebruik je wat?</h2>
+    <div class="relative" role="img" aria-label="Vergelijking van de drie API clients">
+      <svg viewBox="0 0 700 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+        <!-- cURL column -->
+        <rect x="10" y="10" width="210" height="180" rx="12" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
+        <text x="115" y="36" text-anchor="middle" fill="#2D2A26" font-size="13" font-weight="600" font-family="var(--font-display)">cURL</text>
+        <line x1="30" y1="46" x2="200" y2="46" stroke="#D6D0C8" stroke-width="1"/>
+        <text x="115" y="68" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">Snel even testen</text>
+        <text x="115" y="86" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">In scripts en CI/CD</text>
+        <text x="115" y="104" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">Geen installatie nodig</text>
+        <text x="115" y="130" text-anchor="middle" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">+ snel, overal beschikbaar</text>
+        <text x="115" y="150" text-anchor="middle" fill="#C4573A" font-size="9" font-family="var(--font-code)">- geen visuele interface</text>
+        <text x="115" y="170" text-anchor="middle" fill="#C4573A" font-size="9" font-family="var(--font-code)">- lange commando's bij POST</text>
+
+        <!-- Postman column -->
+        <rect x="240" y="10" width="210" height="180" rx="12" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
+        <text x="345" y="36" text-anchor="middle" fill="#2D2A26" font-size="13" font-weight="600" font-family="var(--font-display)">Postman</text>
+        <line x1="260" y1="46" x2="430" y2="46" stroke="#D6D0C8" stroke-width="1"/>
+        <text x="345" y="68" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">API's verkennen en debuggen</text>
+        <text x="345" y="86" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">Requests opslaan in collecties</text>
+        <text x="345" y="104" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">Team-samenwerking</text>
+        <text x="345" y="130" text-anchor="middle" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">+ visueel, overzichtelijk</text>
+        <text x="345" y="150" text-anchor="middle" fill="#C4573A" font-size="9" font-family="var(--font-code)">- moet geinstalleerd worden</text>
+        <text x="345" y="170" text-anchor="middle" fill="#C4573A" font-size="9" font-family="var(--font-code)">- niet automatiseerbaar</text>
+
+        <!-- Python column -->
+        <rect x="470" y="10" width="210" height="180" rx="12" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
+        <text x="575" y="36" text-anchor="middle" fill="#2D2A26" font-size="13" font-weight="600" font-family="var(--font-display)">Python</text>
+        <line x1="490" y1="46" x2="660" y2="46" stroke="#D6D0C8" stroke-width="1"/>
+        <text x="575" y="68" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">Data automatisch verwerken</text>
+        <text x="575" y="86" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">Integratie in applicaties</text>
+        <text x="575" y="104" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-body)">Complexe logica toevoegen</text>
+        <text x="575" y="130" text-anchor="middle" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">+ volledig programmeerbaar</text>
+        <text x="575" y="150" text-anchor="middle" fill="#C4573A" font-size="9" font-family="var(--font-code)">- meer setup nodig</text>
+        <text x="575" y="170" text-anchor="middle" fill="#C4573A" font-size="9" font-family="var(--font-code)">- kennis van Python vereist</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Summary grid -->
+  <section class="mb-16">
+    <div class="bg-[var(--color-bg-secondary)] rounded-xl p-8">
+      <h2 class="mb-6">Overzicht</h2>
+      <div class="grid sm:grid-cols-3 gap-4">
+        {[
+          { num: '1', name: 'cURL', summary: 'Terminal, snel, overal beschikbaar' },
+          { num: '2', name: 'Postman', summary: 'Visueel, overzichtelijk, opslaan in collecties' },
+          { num: '3', name: 'Python', summary: 'Vanuit code, automatiseerbaar, data verwerken' },
+        ].map(({ num, name, summary }) => (
+          <a href={`#client-${num}`} class="group block p-4 rounded-lg bg-[var(--color-bg-primary)] hover:bg-white transition-colors duration-200">
+            <span class="block text-2xl font-light text-[var(--color-accent-ochre)] mb-2" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">{num}</span>
+            <span class="block text-sm font-medium mb-1" style="font-family: var(--font-display);">{name}</span>
+            <span class="block text-xs text-[var(--color-text-secondary)] leading-relaxed">{summary}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .client-section {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: revealSection 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+  .client-section:nth-child(4) { animation-delay: 0.05s; }
+  .client-section:nth-child(5) { animation-delay: 0.1s; }
+  .client-section:nth-child(6) { animation-delay: 0.15s; }
+
+  @keyframes revealSection {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .client-number {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .client-section:hover .client-number {
+    transform: scale(1.08);
+    box-shadow: 0 4px 20px rgba(212, 168, 67, 0.15);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .client-section {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+    .client-section:hover .client-number {
+      transform: none;
+    }
+  }
+</style>

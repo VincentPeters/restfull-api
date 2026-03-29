@@ -8,21 +8,22 @@ interface Props {
 
 const { title, breadcrumbs } = Astro.props;
 const currentPath = Astro.url.pathname;
+const base = import.meta.env.BASE_URL;
 
 const navLinks = [
-  { label: 'Naslagwerk', href: '/naslagwerk' },
-  { label: 'REST Quiz', href: '/oefeningen/rest-quiz' },
-  { label: 'Architectuur', href: '/oefeningen/architectuur' },
-  { label: 'URI Spotter', href: '/oefeningen/uri-spotter' },
-  { label: 'URI Builder', href: '/oefeningen/uri-builder' },
-  { label: 'JSON Explorer', href: '/oefeningen/json-explorer' },
+  { label: 'Naslagwerk', href: `${base}/naslagwerk` },
+  { label: 'REST Quiz', href: `${base}/oefeningen/rest-quiz` },
+  { label: 'Architectuur', href: `${base}/oefeningen/architectuur` },
+  { label: 'URI Spotter', href: `${base}/oefeningen/uri-spotter` },
+  { label: 'URI Builder', href: `${base}/oefeningen/uri-builder` },
+  { label: 'JSON Explorer', href: `${base}/oefeningen/json-explorer` },
 ];
 ---
 
 <html lang="nl">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Interactief compendium bij de RESTful API cursus — KdG" />
     <title>{title} — RESTful API Compendium</title>
@@ -31,7 +32,7 @@ const navLinks = [
     <!-- Navigation -->
     <nav class="border-b border-[var(--color-border)] bg-[var(--color-bg-primary)] sticky top-0 z-10">
       <div class="max-w-5xl mx-auto px-6 py-4 flex items-baseline justify-between gap-6">
-        <a href="/" class="no-underline shrink-0">
+        <a href={base} class="no-underline shrink-0">
           <span class="text-xl font-normal tracking-tight text-[var(--color-text-primary)] hover:text-[var(--color-accent-rust)]" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">
             RESTful API Compendium
           </span>
@@ -89,7 +90,7 @@ const navLinks = [
     {breadcrumbs && breadcrumbs.length > 0 && (
       <div class="max-w-5xl mx-auto px-6 pt-4">
         <div class="flex gap-2 text-xs text-[var(--color-text-secondary)]">
-          <a href="/" class="hover:text-[var(--color-accent-rust)] transition-colors">Home</a>
+          <a href={base} class="hover:text-[var(--color-accent-rust)] transition-colors">Home</a>
           {breadcrumbs.map((crumb) => (
             <>
               <span>/</span>

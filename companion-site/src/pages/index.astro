@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+const base = import.meta.env.BASE_URL;
+
 const chapters = [
   {
     label: 'Referentie',
@@ -8,7 +10,7 @@ const chapters = [
       {
         title: 'Naslagwerk',
         description: 'HTTP-methoden, statuscodes, URI-regels en REST-principes op één plek.',
-        href: '/naslagwerk',
+        href: `${base}/naslagwerk`,
         accent: 'var(--color-accent-sage)',
         span: 'large',
       },
@@ -20,14 +22,14 @@ const chapters = [
       {
         title: 'REST Quiz',
         description: 'Test je kennis van de vijf REST-principes met scenario-vragen.',
-        href: '/oefeningen/rest-quiz',
+        href: `${base}/oefeningen/rest-quiz`,
         accent: 'var(--color-accent-sage)',
         span: 'small',
       },
       {
         title: 'Architectuur Builder',
         description: 'Sleep de lagen van een REST-architectuur in de juiste volgorde.',
-        href: '/oefeningen/architectuur',
+        href: `${base}/oefeningen/architectuur`,
         accent: 'var(--color-accent-rust)',
         span: 'small',
       },
@@ -39,14 +41,14 @@ const chapters = [
       {
         title: 'URI Spotter',
         description: 'Herken de correcte URI uit twee opties.',
-        href: '/oefeningen/uri-spotter',
+        href: `${base}/oefeningen/uri-spotter`,
         accent: 'var(--color-accent-ochre)',
         span: 'small',
       },
       {
         title: 'URI Builder',
         description: 'Bouw zelf de juiste RESTful URI voor elk scenario.',
-        href: '/oefeningen/uri-builder',
+        href: `${base}/oefeningen/uri-builder`,
         accent: 'var(--color-accent-rust)',
         span: 'small',
       },
@@ -58,7 +60,7 @@ const chapters = [
       {
         title: 'JSON Explorer',
         description: 'Verken live API-responses van de Gaming API en beantwoord uitdagingen.',
-        href: '/oefeningen/json-explorer',
+        href: `${base}/oefeningen/json-explorer`,
         accent: 'var(--color-accent-ochre)',
         span: 'large',
       },

@@ -11,7 +11,7 @@
       "id": "load-balancer",
       "label": "Load Balancer",
       "subtitle": "Verkeersverdeling",
-      "description": "Verdeelt inkomende requests over meerdere servers om de belasting te spreiden en beschikbaarheid te garanderen.",
+      "description": "Verdeelt inkomende requests over meerdere servers, zodat de belasting gespreid wordt en alles bereikbaar blijft.",
       "order": 2
     },
     {
@@ -39,7 +39,7 @@
       "id": "database",
       "label": "Database",
       "subtitle": "Data Opslag",
-      "description": "Slaat alle data persistent op. De applicatieserver communiceert met de database om resources te lezen, schrijven, updaten of verwijderen.",
+      "description": "Slaat alle data op. De applicatieserver praat met de database om resources te lezen, schrijven, updaten of verwijderen.",
       "order": 6
     }
   ]

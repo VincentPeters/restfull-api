@@ -5,7 +5,7 @@
     "question": "Welk REST-principe wordt hier geschonden?",
     "options": ["Uniform Interface", "Client-Server", "Stateless", "Cacheable"],
     "correctIndex": 2,
-    "explanation": "Bij REST is elke request stateless — de server bewaart geen sessie-informatie. De client moet alle nodige info (zoals een token) bij elke request meesturen."
+    "explanation": "Bij REST is elke request stateless: de server bewaart geen sessie-informatie. De client moet alle nodige info (zoals een token) bij elke request meesturen."
   },
   {
     "id": 2,
@@ -13,7 +13,7 @@
     "question": "Welk REST-principe wordt hier geschonden?",
     "options": ["Uniform Interface", "Stateless", "Client-Server", "Layered System"],
     "correctIndex": 0,
-    "explanation": "De Uniform Interface vereist consistente URL-structuren. Werkwoorden horen niet in URI's — gebruik GET /users, POST /users en DELETE /users/123."
+    "explanation": "De Uniform Interface vereist consistente URL-structuren. Werkwoorden horen niet in URI's. Gebruik GET /users, POST /users en DELETE /users/123."
   },
   {
     "id": 3,
@@ -21,7 +21,7 @@
     "question": "Welk REST-principe wordt hier gedemonstreerd?",
     "options": ["Cacheable", "Client-Server", "Stateless", "Uniform Interface"],
     "correctIndex": 1,
-    "explanation": "Client-Server scheiding: de server biedt enkel data aan. Verschillende clients (app, website, dashboard) kunnen dezelfde API gebruiken."
+    "explanation": "Client-Server scheiding: de server levert alleen data. Verschillende clients (app, website, dashboard) kunnen dezelfde API gebruiken."
   },
   {
     "id": 4,
@@ -85,7 +85,7 @@
     "question": "Welk REST-principe zorgt hiervoor?",
     "options": ["Cacheable", "Layered System", "Stateless", "Client-Server"],
     "correctIndex": 2,
-    "explanation": "Stateless: de server bewaart geen sessies. Na een herstart hoeft er geen sessie-informatie hersteld te worden — elke request is zelfstandig."
+    "explanation": "Stateless: de server bewaart geen sessies. Na een herstart hoeft er geen sessie-informatie hersteld te worden. Elke request is zelfstandig."
   },
   {
     "id": 12,
@@ -101,7 +101,7 @@
     "question": "Wat klopt er aan deze API?",
     "options": ["De endpoints volgen het Uniform Interface principe", "De API is Stateless", "De API gebruikt een Layered System", "De API is Cacheable"],
     "correctIndex": 0,
-    "explanation": "De endpoints zijn consistent, voorspelbaar en gebruiken standaard HTTP-methoden — een perfecte Uniform Interface."
+    "explanation": "De endpoints zijn consistent, voorspelbaar en gebruiken standaard HTTP-methoden. Een perfecte Uniform Interface."
   },
   {
     "id": 14,
@@ -117,7 +117,7 @@
     "question": "Welk probleem ontstaat hierdoor?",
     "options": ["De API is niet meer Stateless", "De API heeft geen Uniform Interface", "De API is niet meer Cacheable", "De API schendt Client-Server"],
     "correctIndex": 0,
-    "explanation": "De server onthoudt informatie tussen requests — dit schendt het Stateless principe. Elke request moet alle nodige info bevatten."
+    "explanation": "De server onthoudt informatie tussen requests. Dit schendt het Stateless principe. Elke request moet alle nodige info bevatten."
   },
   {
     "id": 16,

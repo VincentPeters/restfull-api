@@ -1,0 +1,750 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="URI-naamgevingsregels" breadcrumbs={[{ label: "URI-naamgeving" }]}>
+
+  <header class="mb-16 pt-4">
+    <p class="text-xs font-medium tracking-wide uppercase text-[var(--color-accent-rust)] mb-3" style="font-family: var(--font-code);">Hoofdstuk 2</p>
+    <h1 class="mb-5">URI-naamgevingsregels</h1>
+    <p class="text-[var(--color-text-secondary)] max-w-2xl text-lg leading-relaxed">
+      Een goed ontworpen URI is <em>leesbaar, voorspelbaar en consistent</em>. De URI
+      is het adres van elke resource in je API. Volg deze acht regels en je API voelt
+      meteen logisch en professioneel aan.
+    </p>
+  </header>
+
+  <!-- Quick nav pills -->
+  <nav class="mb-16 flex flex-wrap gap-2" aria-label="URI-regels">
+    {[
+      'Zelfstandige naamwoorden',
+      'Meervoudsvorm',
+      'ID voor resources',
+      'Kleine letters',
+      'Koppeltekens',
+      'Hiërarchie',
+      'Query parameters',
+      'Consistentie',
+    ].map((name, i) => (
+      <a
+        href={`#regel-${i + 1}`}
+        class="inline-flex items-center gap-2 px-4 py-2 text-sm rounded-full border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent-rust)] hover:text-[var(--color-accent-rust)] transition-colors duration-200"
+      >
+        <span class="w-5 h-5 flex items-center justify-center rounded-full bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-[10px] font-medium" style="font-family: var(--font-code);">{i + 1}</span>
+        {name}
+      </a>
+    ))}
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       REGEL 1 — ZELFSTANDIGE NAAMWOORDEN
+       ═══════════════════════════════════════════ -->
+  <section id="regel-1" class="rule-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="rule-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">1</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Zelfstandige naamwoorden</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Geen werkwoorden in je URI</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Een URI beschrijft <strong>wat</strong> je aanspreekt, niet <strong>wat je ermee doet</strong>.
+          De actie wordt bepaald door de HTTP-methode (GET, POST, PUT, DELETE), niet door het pad.
+          Werkwoorden in de URI zijn een teken dat je REST-principes niet correct toepast.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Denk aan een URI als een <em>adres</em> van een ding. Je schrijft ook niet
+          "haalOp-Kerkstraat-5" op een envelop. Je schrijft gewoon "Kerkstraat 5"
+          en de postbode weet wat hij moet doen.
+        </p>
+      </div>
+
+      <!-- Visual: verb vs noun comparison -->
+      <div class="bg-[var(--color-bg-code)] rounded-xl p-6" role="img" aria-label="Werkwoorden versus zelfstandige naamwoorden in URI's">
+        <p class="text-[10px] uppercase tracking-widest text-[#6B6560] mb-5" style="font-family: var(--font-code);">De HTTP-methode is het werkwoord</p>
+        <div class="space-y-4">
+          <!-- Bad examples -->
+          <div>
+            <p class="text-[10px] text-[var(--color-accent-rust)] mb-2" style="font-family: var(--font-code);">FOUT: werkwoord in URI</p>
+            <div class="space-y-1.5">
+              {['/getGames', '/createGame', '/deleteGame/42', '/updateGame/42'].map(uri => (
+                <div class="flex items-center gap-2">
+                  <svg width="12" height="12" viewBox="0 0 12 12" class="shrink-0"><circle cx="6" cy="6" r="5" stroke="#C4573A" stroke-width="1" fill="none"/><path d="M4 4l4 4M8 4l-4 4" stroke="#C4573A" stroke-width="1"/></svg>
+                  <span class="text-[11px] text-[#A89F94] line-through opacity-70" style="font-family: var(--font-code);">{uri}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <!-- Good examples -->
+          <div>
+            <p class="text-[10px] text-[var(--color-accent-sage)] mb-2" style="font-family: var(--font-code);">CORRECT: methode + zelfstandig naamwoord</p>
+            <div class="space-y-1.5">
+              {[
+                { method: 'GET', path: '/games', color: 'var(--color-accent-sage)' },
+                { method: 'POST', path: '/games', color: 'var(--color-accent-ochre)' },
+                { method: 'DELETE', path: '/games/42', color: 'var(--color-accent-rust)' },
+                { method: 'PUT', path: '/games/42', color: 'var(--color-accent-ochre)' },
+              ].map(({ method, path, color }) => (
+                <div class="flex items-center gap-2">
+                  <svg width="12" height="12" viewBox="0 0 12 12" class="shrink-0"><circle cx="6" cy="6" r="5" stroke="#5B7B6A" stroke-width="1" fill="none"/><path d="M3.5 6l2 2 3-3.5" stroke="#5B7B6A" stroke-width="1" fill="none"/></svg>
+                  <span class="text-[11px] font-medium" style={`font-family: var(--font-code); color: ${color};`}>{method}</span>
+                  <span class="text-[11px] text-[#F7F3EE]" style="font-family: var(--font-code);">{path}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> Het URI-pad zegt <em>wat</em>, de HTTP-methode zegt <em>wat je ermee doet</em>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       REGEL 2 — MEERVOUDSVORM
+       ═══════════════════════════════════════════ -->
+  <section id="regel-2" class="rule-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="rule-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">2</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Meervoudsvorm</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Collecties zijn altijd meervoud</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Een endpoint verwijst naar een <strong>collectie van resources</strong>. Omdat een
+          collectie meerdere items bevat, gebruik je altijd de meervoudsvorm. Ook als je
+          één specifiek item ophaalt via een ID, blijft het pad in meervoud. Je selecteert
+          namelijk één item <em>uit</em> de collectie.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Vergelijk het met een mappenstructuur: de map heet "Documenten" (meervoud),
+          ook al open je er maar één document uit.
+        </p>
+      </div>
+
+      <!-- Visual: collection metaphor -->
+      <div class="relative" role="img" aria-label="Collectie in meervoud met individuele items">
+        <svg viewBox="0 0 440 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <!-- Bad: singular -->
+          <text x="110" y="20" text-anchor="middle" fill="#C4573A" font-size="10" font-family="var(--font-code)" letter-spacing="0.05em">FOUT</text>
+          <rect x="30" y="30" width="160" height="50" rx="8" fill="#C4573A" opacity="0.06" stroke="#C4573A" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="110" y="60" text-anchor="middle" fill="#C4573A" font-size="13" font-family="var(--font-code)">/game</text>
+
+          <!-- Good: plural -->
+          <text x="330" y="20" text-anchor="middle" fill="#5B7B6A" font-size="10" font-family="var(--font-code)" letter-spacing="0.05em">CORRECT</text>
+          <rect x="250" y="30" width="160" height="50" rx="8" fill="#5B7B6A" opacity="0.06" stroke="#5B7B6A" stroke-width="1.5"/>
+          <text x="330" y="60" text-anchor="middle" fill="#5B7B6A" font-size="13" font-family="var(--font-code)">/games</text>
+
+          <!-- Collection box -->
+          <rect x="200" y="100" width="220" height="126" rx="10" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
+          <text x="310" y="118" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-code)" letter-spacing="0.05em">COLLECTIE: /games</text>
+
+          <!-- Items in collection -->
+          {[
+            { id: '1', name: 'The Witcher 3', y: 130 },
+            { id: '2', name: 'Elden Ring', y: 152 },
+            { id: '3', name: 'Hades', y: 174 },
+            { id: '4', name: 'Celeste', y: 196 },
+          ].map(({ id, name, y }) => (
+            <g>
+              <rect x="214" y={y} width="192" height="18" rx="4" fill="#F7F3EE" stroke="#D6D0C8" stroke-width="0.75"/>
+              <text x="226" y={y + 13} fill="#D4A843" font-size="9" font-family="var(--font-code)">#{id}</text>
+              <text x="244" y={y + 13} fill="#2D2A26" font-size="9" font-family="var(--font-body)">{name}</text>
+            </g>
+          ))}
+
+          <!-- Arrow selecting one -->
+          <text x="90" y="118" text-anchor="middle" fill="#6B6560" font-size="9" font-family="var(--font-code)">GET /games/2</text>
+          <line x1="140" y1="118" x2="212" y2="158" stroke="#D4A843" stroke-width="1.5"/>
+          <polygon points="212,158 204,153 206,163" fill="#D4A843"/>
+
+          <!-- Highlight item 2 -->
+          <rect x="214" y="152" width="192" height="18" rx="4" fill="#D4A843" opacity="0.12" stroke="#D4A843" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> <code class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/games</code> is de collectie, <code class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/games/2</code> is één item eruit.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       REGEL 3 — ID VOOR SPECIFIEKE RESOURCES
+       ═══════════════════════════════════════════ -->
+  <section id="regel-3" class="rule-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="rule-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">3</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">ID in het pad</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Identificeer resources via path parameters</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Om één specifieke resource op te halen, gebruik je het <strong>ID als onderdeel
+          van het pad</strong>, niet als query parameter. Het ID is namelijk geen filter,
+          maar een directe aanwijzing naar een unieke resource.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Denk aan het verschil tussen een huisnummer (onderdeel van het adres) en een
+          opmerking op de envelop. Het ID hoort in het adres zelf.
+        </p>
+      </div>
+
+      <!-- Visual: path vs query -->
+      <div class="bg-[var(--color-bg-code)] rounded-xl p-6" role="img" aria-label="Path parameter versus query parameter voor ID">
+        <p class="text-[10px] uppercase tracking-widest text-[#6B6560] mb-5" style="font-family: var(--font-code);">ID hoort in het pad</p>
+
+        <!-- Bad -->
+        <div class="mb-5">
+          <div class="flex items-center gap-2 mb-2">
+            <svg width="12" height="12" viewBox="0 0 12 12" class="shrink-0"><circle cx="6" cy="6" r="5" stroke="#C4573A" stroke-width="1" fill="none"/><path d="M4 4l4 4M8 4l-4 4" stroke="#C4573A" stroke-width="1"/></svg>
+            <span class="text-[10px] text-[var(--color-accent-rust)]" style="font-family: var(--font-code);">FOUT</span>
+          </div>
+          <div class="rounded-lg border border-[#3D3A36] px-4 py-3">
+            <span class="text-[12px]" style="font-family: var(--font-code);">
+              <span class="text-[var(--color-accent-sage)]">GET</span>
+              <span class="text-[#F7F3EE]"> /customers</span><span class="text-[#A89F94]">?id=1234</span>
+            </span>
+            <p class="text-[10px] text-[#6B6560] mt-1.5" style="font-family: var(--font-code);">ID als query param, alsof het een filter is</p>
+          </div>
+        </div>
+
+        <!-- Good -->
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <svg width="12" height="12" viewBox="0 0 12 12" class="shrink-0"><circle cx="6" cy="6" r="5" stroke="#5B7B6A" stroke-width="1" fill="none"/><path d="M3.5 6l2 2 3-3.5" stroke="#5B7B6A" stroke-width="1" fill="none"/></svg>
+            <span class="text-[10px] text-[var(--color-accent-sage)]" style="font-family: var(--font-code);">CORRECT</span>
+          </div>
+          <div class="rounded-lg border border-[var(--color-accent-sage)] px-4 py-3" style="border-color: rgba(91,123,106,0.4);">
+            <span class="text-[12px]" style="font-family: var(--font-code);">
+              <span class="text-[var(--color-accent-sage)]">GET</span>
+              <span class="text-[#F7F3EE]"> /customers/</span><span class="text-[var(--color-accent-ochre)]">1234</span>
+            </span>
+            <p class="text-[10px] text-[#6B6560] mt-1.5" style="font-family: var(--font-code);">ID in het pad: directe aanwijzing</p>
+          </div>
+        </div>
+
+        <!-- URI anatomy -->
+        <div class="mt-5 pt-4 border-t border-[#3D3A36]">
+          <p class="text-[10px] text-[#6B6560] mb-2" style="font-family: var(--font-code);">Anatomie van de URI:</p>
+          <div class="flex items-center gap-0 text-[11px]" style="font-family: var(--font-code);">
+            <span class="px-2 py-1 rounded-l bg-[#3D3A36] text-[var(--color-accent-sage)]">collectie</span>
+            <span class="px-2 py-1 bg-[#4D4A46] text-[#6B6560]">/</span>
+            <span class="px-2 py-1 rounded-r bg-[#3D3A36] text-[var(--color-accent-ochre)]">:id</span>
+          </div>
+          <div class="flex items-center gap-0 text-[11px] mt-1" style="font-family: var(--font-code);">
+            <span class="px-2 py-1 rounded-l bg-[#3D3A36] text-[#F7F3EE]">/customers</span>
+            <span class="px-2 py-1 bg-[#4D4A46] text-[#6B6560]">/</span>
+            <span class="px-2 py-1 rounded-r bg-[#3D3A36] text-[var(--color-accent-ochre)]">1234</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> Een ID identificeert een unieke resource en hoort daarom in het pad, niet als query parameter.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       REGEL 4 — KLEINE LETTERS
+       ═══════════════════════════════════════════ -->
+  <section id="regel-4" class="rule-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="rule-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">4</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Kleine letters</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Altijd lowercase in je URI-paden</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          URI's zijn <strong>hoofdlettergevoelig</strong> volgens RFC 3986. Dat betekent dat
+          <code class="text-sm px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/Games</code> en
+          <code class="text-sm px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/games</code>
+          technisch twee verschillende adressen zijn. Om verwarring te voorkomen, gebruik je
+          <strong>altijd kleine letters</strong>.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Dit geldt ook voor samengestelde woorden: niet <code class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/shippingAddresses</code>
+          (camelCase) maar <code class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/shipping-addresses</code>
+          (kebab-case met koppeltekens).
+        </p>
+      </div>
+
+      <!-- Visual: case comparison -->
+      <div class="relative" role="img" aria-label="Verschillende casings van URI's vergeleken">
+        <svg viewBox="0 0 440 220" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <text x="220" y="18" text-anchor="middle" fill="#6B6560" font-size="10" font-family="var(--font-code)" letter-spacing="0.05em">URI'S ZIJN HOOFDLETTERGEVOELIG</text>
+
+          <!-- Three different URIs pointing to different (or confusing) places -->
+          <rect x="30" y="36" width="170" height="36" rx="6" fill="#C4573A" opacity="0.06" stroke="#C4573A" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="115" y="58" text-anchor="middle" fill="#C4573A" font-size="12" font-family="var(--font-code)">/Products</text>
+
+          <rect x="30" y="82" width="170" height="36" rx="6" fill="#C4573A" opacity="0.06" stroke="#C4573A" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="115" y="104" text-anchor="middle" fill="#C4573A" font-size="12" font-family="var(--font-code)">/PRODUCTS</text>
+
+          <rect x="30" y="128" width="170" height="36" rx="6" fill="#C4573A" opacity="0.06" stroke="#C4573A" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="115" y="150" text-anchor="middle" fill="#C4573A" font-size="12" font-family="var(--font-code)">/prodUCTs</text>
+
+          <!-- Question marks -->
+          <text x="220" y="66" fill="#C4573A" font-size="14" font-family="var(--font-code)">?</text>
+          <text x="220" y="108" fill="#C4573A" font-size="14" font-family="var(--font-code)">?</text>
+          <text x="220" y="150" fill="#C4573A" font-size="14" font-family="var(--font-code)">?</text>
+
+          <!-- Correct -->
+          <rect x="250" y="82" width="170" height="36" rx="6" fill="#5B7B6A" opacity="0.08" stroke="#5B7B6A" stroke-width="1.5"/>
+          <text x="335" y="104" text-anchor="middle" fill="#5B7B6A" font-size="12" font-family="var(--font-code)">/products</text>
+          <text x="335" y="78" text-anchor="middle" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">altijd lowercase</text>
+
+          <!-- Arrow -->
+          <path d="M335 118 L335 160" stroke="#5B7B6A" stroke-width="1.5"/>
+          <polygon points="335,160 330,152 340,152" fill="#5B7B6A"/>
+
+          <!-- Result -->
+          <rect x="265" y="166" width="140" height="36" rx="8" fill="#5B7B6A" opacity="0.08"/>
+          <text x="335" y="182" text-anchor="middle" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">Geen verwarring</text>
+          <text x="335" y="194" text-anchor="middle" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">Geen 404's</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> Altijd lowercase. <code class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/products</code> is de enige juiste schrijfwijze.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       REGEL 5 — KOPPELTEKENS
+       ═══════════════════════════════════════════ -->
+  <section id="regel-5" class="rule-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="rule-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">5</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Koppeltekens</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Woorden scheiden met een streepje (-)</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Wanneer een resourcenaam uit meerdere woorden bestaat, gebruik je een <strong>koppelteken
+          (-)</strong> als scheidingsteken. Geen underscores, geen camelCase, geen spaties.
+          Dit heet <em>kebab-case</em> en is de standaard voor URI's.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Waarom geen underscores? In sommige fonts en bij onderlijnde links zijn underscores
+          onzichtbaar. Koppeltekens zijn altijd duidelijk leesbaar.
+        </p>
+      </div>
+
+      <!-- Visual: naming conventions -->
+      <div class="bg-[var(--color-bg-code)] rounded-xl p-6" role="img" aria-label="Vergelijking van naamgevingsconventies">
+        <p class="text-[10px] uppercase tracking-widest text-[#6B6560] mb-5" style="font-family: var(--font-code);">Naamgeving vergelijken</p>
+        <div class="space-y-3">
+          {[
+            { label: 'camelCase', uri: '/shippingAddresses', ok: false },
+            { label: 'snake_case', uri: '/shipping_addresses', ok: false },
+            { label: 'PascalCase', uri: '/ShippingAddresses', ok: false },
+            { label: 'kebab-case', uri: '/shipping-addresses', ok: true },
+          ].map(({ label, uri, ok }) => (
+            <div class="flex items-center gap-3">
+              <span class="w-20 text-right text-[10px] text-[#6B6560]" style="font-family: var(--font-code);">{label}</span>
+              <div class={`flex-1 flex items-center gap-2 rounded-lg border px-4 py-2.5 ${ok ? 'border-[rgba(91,123,106,0.4)]' : 'border-[#3D3A36]'}`}>
+                {ok ? (
+                  <svg width="12" height="12" viewBox="0 0 12 12" class="shrink-0"><circle cx="6" cy="6" r="5" stroke="#5B7B6A" stroke-width="1" fill="none"/><path d="M3.5 6l2 2 3-3.5" stroke="#5B7B6A" stroke-width="1" fill="none"/></svg>
+                ) : (
+                  <svg width="12" height="12" viewBox="0 0 12 12" class="shrink-0"><circle cx="6" cy="6" r="5" stroke="#C4573A" stroke-width="1" fill="none"/><path d="M4 4l4 4M8 4l-4 4" stroke="#C4573A" stroke-width="1"/></svg>
+                )}
+                <span class={`text-[12px] ${ok ? 'text-[#F7F3EE]' : 'text-[#A89F94]'}`} style="font-family: var(--font-code);">{uri}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> Meerdere woorden? Kebab-case: <code class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/shipping-addresses</code>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       REGEL 6 — HIËRARCHIE
+       ═══════════════════════════════════════════ -->
+  <section id="regel-6" class="rule-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="rule-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">6</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Hiërarchie</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Relaties weerspiegelen in het pad</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Wanneer resources een <strong>ouder-kind relatie</strong> hebben, druk je dat uit
+          in de URI-structuur. Orders horen bij een user, reviews horen bij een game.
+          Het pad leest als een hiërarchie: van breed naar specifiek.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Dit maakt de API zelfdocumenterend: je kunt aan de URI aflezen welke relatie
+          er bestaat. Beperk je tot maximaal 2-3 niveaus diep om de URI leesbaar te houden.
+        </p>
+      </div>
+
+      <!-- Visual: tree structure -->
+      <div class="relative" role="img" aria-label="Hiërarchische URI-structuur als boomdiagram">
+        <svg viewBox="0 0 440 280" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <!-- Root: /users -->
+          <rect x="170" y="10" width="100" height="36" rx="8" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
+          <text x="220" y="32" text-anchor="middle" fill="#2D2A26" font-size="11" font-family="var(--font-code)">/users</text>
+
+          <!-- Arrow to user 123 -->
+          <line x1="220" y1="46" x2="220" y2="68" stroke="#D6D0C8" stroke-width="1.5"/>
+          <polygon points="220,68 215,60 225,60" fill="#D6D0C8"/>
+
+          <!-- User 123 -->
+          <rect x="150" y="72" width="140" height="36" rx="8" fill="#D4A843" opacity="0.1" stroke="#D4A843" stroke-width="1.5"/>
+          <text x="220" y="94" text-anchor="middle" fill="#D4A843" font-size="11" font-family="var(--font-code)">/users/123</text>
+
+          <!-- Branches -->
+          <line x1="220" y1="108" x2="120" y2="140" stroke="#D6D0C8" stroke-width="1.5"/>
+          <line x1="220" y1="108" x2="320" y2="140" stroke="#D6D0C8" stroke-width="1.5"/>
+
+          <!-- Orders collection -->
+          <rect x="40" y="144" width="160" height="36" rx="8" fill="#5B7B6A" opacity="0.08" stroke="#5B7B6A" stroke-width="1.5"/>
+          <text x="120" y="166" text-anchor="middle" fill="#5B7B6A" font-size="11" font-family="var(--font-code)">/users/123/orders</text>
+
+          <!-- Reviews collection -->
+          <rect x="240" y="144" width="170" height="36" rx="8" fill="#5B7B6A" opacity="0.08" stroke="#5B7B6A" stroke-width="1.5"/>
+          <text x="325" y="166" text-anchor="middle" fill="#5B7B6A" font-size="11" font-family="var(--font-code)">/users/123/reviews</text>
+
+          <!-- Specific order -->
+          <line x1="120" y1="180" x2="120" y2="206" stroke="#D6D0C8" stroke-width="1.5"/>
+          <polygon points="120,206 115,198 125,198" fill="#D6D0C8"/>
+
+          <rect x="20" y="210" width="200" height="36" rx="8" fill="#C4573A" opacity="0.06" stroke="#C4573A" stroke-width="1"/>
+          <text x="120" y="232" text-anchor="middle" fill="#C4573A" font-size="11" font-family="var(--font-code)">/users/123/orders/789</text>
+
+          <!-- Reading direction -->
+          <text x="360" y="240" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">leesrichting:</text>
+          <text x="360" y="254" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">breed → specifiek</text>
+          <path d="M330 260 L390 260" stroke="#6B6560" stroke-width="1"/>
+          <polygon points="390,260 384,256 384,264" fill="#6B6560"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> De URI leest als een pad door de datastructuur: <code class="text-xs px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/users/123/orders</code> = "de orders van user 123".
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       REGEL 7 — QUERY PARAMETERS
+       ═══════════════════════════════════════════ -->
+  <section id="regel-7" class="rule-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="rule-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">7</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Query parameters</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Filteren, sorteren en pagineren</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Query parameters (alles na het <strong>?</strong>) gebruik je voor bewerkingen
+          op een collectie die de resource zelf niet veranderen: <em>filteren</em>,
+          <em>sorteren</em>, <em>zoeken</em> en <em>pagineren</em>. Ze veranderen niet
+          <strong>welke</strong> resource je aanspreekt, maar <strong>hoe</strong> je de
+          collectie bekijkt.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Maak geen aparte endpoints per filter. Eén collectie-endpoint met query parameters
+          is flexibeler en voorspelbaarder.
+        </p>
+      </div>
+
+      <!-- Visual: query parameter anatomy -->
+      <div class="bg-[var(--color-bg-code)] rounded-xl p-6" role="img" aria-label="Anatomie van query parameters">
+        <p class="text-[10px] uppercase tracking-widest text-[#6B6560] mb-5" style="font-family: var(--font-code);">Anatomie van een URI met query params</p>
+
+        <!-- Full URI broken down -->
+        <div class="mb-5 p-4 rounded-lg border border-[#3D3A36]">
+          <div class="flex flex-wrap items-center gap-0 text-[13px]" style="font-family: var(--font-code);">
+            <span class="text-[var(--color-accent-sage)]">GET</span>
+            <span class="ml-2 text-[#F7F3EE]">/products</span>
+            <span class="text-[var(--color-accent-rust)]">?</span>
+            <span class="text-[var(--color-accent-ochre)]">category</span>
+            <span class="text-[#6B6560]">=</span>
+            <span class="text-[#F7F3EE]">electronics</span>
+            <span class="text-[#6B6560]">&</span>
+            <span class="text-[var(--color-accent-ochre)]">sort</span>
+            <span class="text-[#6B6560]">=</span>
+            <span class="text-[#F7F3EE]">price</span>
+            <span class="text-[#6B6560]">&</span>
+            <span class="text-[var(--color-accent-ochre)]">page</span>
+            <span class="text-[#6B6560]">=</span>
+            <span class="text-[#F7F3EE]">2</span>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="space-y-2.5">
+          {[
+            { color: '#F7F3EE', label: '/products', desc: 'Resource (pad)' },
+            { color: 'var(--color-accent-rust)', label: '?', desc: 'Start query string' },
+            { color: 'var(--color-accent-ochre)', label: 'category=...', desc: 'Filter op eigenschap' },
+            { color: 'var(--color-accent-ochre)', label: 'sort=...', desc: 'Sorteer resultaten' },
+            { color: 'var(--color-accent-ochre)', label: 'page=...', desc: 'Paginering' },
+          ].map(({ color, label, desc }) => (
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 rounded-full shrink-0" style={`background: ${color};`}></span>
+              <span class="text-[11px] w-28" style={`font-family: var(--font-code); color: ${color};`}>{label}</span>
+              <span class="text-[10px] text-[#6B6560]">{desc}</span>
+            </div>
+          ))}
+        </div>
+
+        <!-- Bad example -->
+        <div class="mt-5 pt-4 border-t border-[#3D3A36]">
+          <div class="flex items-center gap-2 mb-1">
+            <svg width="12" height="12" viewBox="0 0 12 12" class="shrink-0"><circle cx="6" cy="6" r="5" stroke="#C4573A" stroke-width="1" fill="none"/><path d="M4 4l4 4M8 4l-4 4" stroke="#C4573A" stroke-width="1"/></svg>
+            <span class="text-[10px] text-[var(--color-accent-rust)]" style="font-family: var(--font-code);">Geen apart endpoint per filter</span>
+          </div>
+          <span class="text-[11px] text-[#A89F94] line-through" style="font-family: var(--font-code);">/electronics-products</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> Het pad bepaalt de resource, de query string bepaalt de weergave.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       REGEL 8 — CONSISTENTIE
+       ═══════════════════════════════════════════ -->
+  <section id="regel-8" class="rule-section mb-24 scroll-mt-24">
+    <div class="flex items-start gap-5 mb-8">
+      <span class="rule-number shrink-0 w-14 h-14 flex items-center justify-center rounded-2xl bg-[var(--color-bg-code)] text-[var(--color-accent-ochre)] text-2xl font-light" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">8</span>
+      <div>
+        <h2 class="mb-1" style="font-variation-settings: 'opsz' 72;">Consistentie</h2>
+        <p class="text-[var(--color-text-secondary)] text-sm">Dezelfde regels in de hele API</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-10 items-start">
+      <div>
+        <p class="mb-4 leading-relaxed">
+          Alle voorgaande regels zijn pas echt krachtig als je ze <strong>overal consequent</strong>
+          toepast. Als <code class="text-sm px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)]">/games</code> meervoud en lowercase
+          is, dan moeten <em>alle</em> endpoints dat zijn. Inconsistentie dwingt ontwikkelaars
+          om de documentatie te lezen voor elk endpoint apart.
+        </p>
+        <p class="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+          Een consistente API is voorspelbaar. Een voorspelbare API is snel te leren
+          en prettig om mee te werken. Dat is het hele punt van Uniform Interface (principe 1).
+        </p>
+      </div>
+
+      <!-- Visual: consistent vs inconsistent -->
+      <div class="relative" role="img" aria-label="Consistente versus inconsistente API-naamgeving">
+        <svg viewBox="0 0 440 260" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <!-- Inconsistent side -->
+          <text x="110" y="18" text-anchor="middle" fill="#C4573A" font-size="10" font-family="var(--font-code)" letter-spacing="0.05em">INCONSISTENT</text>
+
+          {[
+            { uri: '/game', y: 34 },
+            { uri: '/Developers', y: 68 },
+            { uri: '/REVIEWS', y: 102 },
+            { uri: '/get_scores', y: 136 },
+          ].map(({ uri, y }) => (
+            <g>
+              <rect x="22" y={y} width="176" height="28" rx="6" fill="#C4573A" opacity="0.05" stroke="#C4573A" stroke-width="1" stroke-dasharray="4 3"/>
+              <text x="110" y={y + 18} text-anchor="middle" fill="#C4573A" font-size="11" font-family="var(--font-code)">{uri}</text>
+            </g>
+          ))}
+
+          <!-- Arrows showing chaos -->
+          <text x="110" y="184" text-anchor="middle" fill="#C4573A" font-size="9" font-family="var(--font-body)">Elk endpoint is een verrassing</text>
+
+          <!-- Consistent side -->
+          <text x="330" y="18" text-anchor="middle" fill="#5B7B6A" font-size="10" font-family="var(--font-code)" letter-spacing="0.05em">CONSISTENT</text>
+
+          {[
+            { uri: '/games', y: 34 },
+            { uri: '/developers', y: 68 },
+            { uri: '/reviews', y: 102 },
+            { uri: '/scores', y: 136 },
+          ].map(({ uri, y }) => (
+            <g>
+              <rect x="242" y={y} width="176" height="28" rx="6" fill="#5B7B6A" opacity="0.08" stroke="#5B7B6A" stroke-width="1.5"/>
+              <text x="330" y={y + 18} text-anchor="middle" fill="#5B7B6A" font-size="11" font-family="var(--font-code)">{uri}</text>
+            </g>
+          ))}
+
+          <!-- Checkmarks pattern -->
+          <text x="330" y="184" text-anchor="middle" fill="#5B7B6A" font-size="9" font-family="var(--font-body)">Ken je er een, ken je ze allemaal</text>
+
+          <!-- Bottom summary -->
+          <rect x="110" y="210" width="220" height="36" rx="8" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1"/>
+          <text x="220" y="228" text-anchor="middle" fill="#2D2A26" font-size="9" font-family="var(--font-code)">meervoud + lowercase + kebab-case + geen werkwoorden</text>
+          <text x="220" y="240" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-body)">= voorspelbare API</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
+      <p class="text-sm text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> Kies je patronen en pas ze overal toe. Consistentie is de belangrijkste regel van allemaal.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       SUMMARY
+       ═══════════════════════════════════════════ -->
+  <section class="mb-16">
+    <div class="bg-[var(--color-bg-secondary)] rounded-xl p-8">
+      <h2 class="mb-6">Samenvatting</h2>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { num: '1', name: 'Naamwoorden', summary: 'Geen werkwoorden in de URI' },
+          { num: '2', name: 'Meervoud', summary: 'Collecties altijd in meervoud' },
+          { num: '3', name: 'ID in pad', summary: 'Unieke resource via path param' },
+          { num: '4', name: 'Lowercase', summary: 'Altijd kleine letters' },
+          { num: '5', name: 'Koppeltekens', summary: 'Woorden scheiden met -' },
+          { num: '6', name: 'Hiërarchie', summary: 'Relaties in het pad uitdrukken' },
+          { num: '7', name: 'Query params', summary: 'Filteren, sorteren, pagineren' },
+          { num: '8', name: 'Consistentie', summary: 'Overal dezelfde regels' },
+        ].map(({ num, name, summary }) => (
+          <a href={`#regel-${num}`} class="group block p-4 rounded-lg bg-[var(--color-bg-primary)] hover:bg-white transition-colors duration-200">
+            <span class="block text-2xl font-light text-[var(--color-accent-ochre)] mb-2" style="font-family: var(--font-display); font-variation-settings: 'opsz' 144;">{num}</span>
+            <span class="block text-sm font-medium mb-1" style="font-family: var(--font-display);">{name}</span>
+            <span class="block text-xs text-[var(--color-text-secondary)] leading-relaxed">{summary}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick reference specimen -->
+  <section class="mb-16">
+    <h2 class="mb-6">Snelreferentie</h2>
+    <div class="specimen rounded-xl p-6">
+      <p class="text-[10px] uppercase tracking-widest text-[#6B6560] mb-4" style="font-family: var(--font-code);">Voorbeeld: een volledige RESTful API</p>
+      <div class="space-y-2 text-[13px]" style="font-family: var(--font-code);">
+        <div><span class="text-[var(--color-accent-sage)]">GET</span>    <span class="text-[#F7F3EE]">/games</span>                          <span class="text-[#6B6560]">  alle games</span></div>
+        <div><span class="text-[var(--color-accent-sage)]">GET</span>    <span class="text-[#F7F3EE]">/games</span><span class="text-[#A89F94]">?genre=rpg&sort=rating</span>   <span class="text-[#6B6560]">  gefilterd + gesorteerd</span></div>
+        <div><span class="text-[var(--color-accent-sage)]">GET</span>    <span class="text-[#F7F3EE]">/games/</span><span class="text-[var(--color-accent-ochre)]">42</span>                       <span class="text-[#6B6560]">  één specifieke game</span></div>
+        <div><span class="text-[var(--color-accent-ochre)]">POST</span>   <span class="text-[#F7F3EE]">/games</span>                          <span class="text-[#6B6560]">  nieuwe game aanmaken</span></div>
+        <div><span class="text-[var(--color-accent-ochre)]">PUT</span>    <span class="text-[#F7F3EE]">/games/</span><span class="text-[var(--color-accent-ochre)]">42</span>                       <span class="text-[#6B6560]">  game volledig bijwerken</span></div>
+        <div><span class="text-[var(--color-accent-rust)]">DELETE</span> <span class="text-[#F7F3EE]">/games/</span><span class="text-[var(--color-accent-ochre)]">42</span>                       <span class="text-[#6B6560]">  game verwijderen</span></div>
+        <div class="pt-2 border-t border-[#3D3A36]"></div>
+        <div><span class="text-[var(--color-accent-sage)]">GET</span>    <span class="text-[#F7F3EE]">/games/</span><span class="text-[var(--color-accent-ochre)]">42</span><span class="text-[#F7F3EE]">/reviews</span>              <span class="text-[#6B6560]">  reviews van game 42</span></div>
+        <div><span class="text-[var(--color-accent-ochre)]">POST</span>   <span class="text-[#F7F3EE]">/games/</span><span class="text-[var(--color-accent-ochre)]">42</span><span class="text-[#F7F3EE]">/reviews</span>              <span class="text-[#6B6560]">  review toevoegen</span></div>
+        <div><span class="text-[var(--color-accent-sage)]">GET</span>    <span class="text-[#F7F3EE]">/developers</span>                     <span class="text-[#6B6560]">  alle developers</span></div>
+        <div><span class="text-[var(--color-accent-sage)]">GET</span>    <span class="text-[#F7F3EE]">/developers/</span><span class="text-[var(--color-accent-ochre)]">7</span><span class="text-[#F7F3EE]">/games</span>            <span class="text-[#6B6560]">  games van developer 7</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA to exercises -->
+  <section class="mb-8 text-center">
+    <p class="text-[var(--color-text-secondary)] mb-4">Klaar om te oefenen?</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a
+        href={`${base}/oefeningen/uri-spotter`}
+        class="inline-flex items-center gap-2 px-5 py-2.5 text-sm rounded-lg bg-[var(--color-bg-code)] text-[var(--color-bg-primary)] hover:opacity-90 transition-opacity duration-200"
+      >
+        URI Spotter →
+      </a>
+      <a
+        href={`${base}/oefeningen/uri-builder`}
+        class="inline-flex items-center gap-2 px-5 py-2.5 text-sm rounded-lg border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent-rust)] hover:text-[var(--color-accent-rust)] transition-colors duration-200"
+      >
+        URI Builder →
+      </a>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .rule-section {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: revealSection 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  }
+  .rule-section:nth-child(4) { animation-delay: 0.05s; }
+  .rule-section:nth-child(5) { animation-delay: 0.1s; }
+  .rule-section:nth-child(6) { animation-delay: 0.15s; }
+  .rule-section:nth-child(7) { animation-delay: 0.2s; }
+  .rule-section:nth-child(8) { animation-delay: 0.25s; }
+  .rule-section:nth-child(9) { animation-delay: 0.3s; }
+  .rule-section:nth-child(10) { animation-delay: 0.35s; }
+  .rule-section:nth-child(11) { animation-delay: 0.4s; }
+
+  @keyframes revealSection {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .rule-number {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .rule-section:hover .rule-number {
+    transform: scale(1.08);
+    box-shadow: 0 4px 20px rgba(212, 168, 67, 0.15);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rule-section {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+    .rule-section:hover .rule-number {
+      transform: none;
+    }
+  }
+</style>

@@ -60,7 +60,7 @@
     "good": "/games?sort=rating&page=2",
     "bad": "/games/sorted-by-rating/page-2",
     "rule": "Gebruik query parameters voor sortering en paginering",
-    "explanation": "Sortering en paginering zijn geen resources — ze horen in query parameters."
+    "explanation": "Sortering en paginering zijn geen resources. Ze horen in query parameters."
   },
   {
     "id": 10,

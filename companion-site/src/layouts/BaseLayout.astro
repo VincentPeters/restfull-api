@@ -10,14 +10,14 @@ const { title, breadcrumbs } = Astro.props;
 const currentPath = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
 
-const navLinks = [
-  { label: 'Naslagwerk', href: `${base}/naslagwerk` },
+const exerciseLinks = [
   { label: 'REST Quiz', href: `${base}/oefeningen/rest-quiz` },
   { label: 'Architectuur', href: `${base}/oefeningen/architectuur` },
   { label: 'URI Spotter', href: `${base}/oefeningen/uri-spotter` },
   { label: 'URI Builder', href: `${base}/oefeningen/uri-builder` },
   { label: 'JSON Explorer', href: `${base}/oefeningen/json-explorer` },
 ];
+const isExercisePage = currentPath.includes('/oefeningen/');
 ---
 
 <html lang="nl">
@@ -25,8 +25,8 @@ const navLinks = [
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Interactief compendium bij de RESTful API cursus — KdG" />
-    <title>{title} — RESTful API Compendium</title>
+    <meta name="description" content="Interactief compendium bij de RESTful API cursus – KdG" />
+    <title>{title} – RESTful API Compendium</title>
   </head>
   <body class="min-h-screen flex flex-col">
     <!-- Navigation -->
@@ -39,19 +39,71 @@ const navLinks = [
         </a>
         <!-- Desktop nav -->
         <div class="hidden lg:flex items-center gap-6 text-sm">
-          {navLinks.map((link) => (
-            <a
-              href={link.href}
+          <a
+            href={`${base}/naslagwerk`}
+            class:list={[
+              'transition-colors duration-200 whitespace-nowrap',
+              currentPath.includes('/naslagwerk')
+                ? 'text-[var(--color-accent-rust)] font-medium'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+            ]}
+          >
+            Naslagwerk
+          </a>
+          <a
+            href={`${base}/principes`}
+            class:list={[
+              'transition-colors duration-200 whitespace-nowrap',
+              currentPath.includes('/principes')
+                ? 'text-[var(--color-accent-rust)] font-medium'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+            ]}
+          >
+            REST-principes
+          </a>
+          <a
+            href={`${base}/uri-naamgeving`}
+            class:list={[
+              'transition-colors duration-200 whitespace-nowrap',
+              currentPath.includes('/uri-naamgeving')
+                ? 'text-[var(--color-accent-rust)] font-medium'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+            ]}
+          >
+            URI-naamgeving
+          </a>
+          <!-- Exercises dropdown -->
+          <div class="relative" id="exercises-dropdown">
+            <button
+              type="button"
               class:list={[
-                'transition-colors duration-200 whitespace-nowrap',
-                currentPath.startsWith(link.href)
+                'flex items-center gap-1 transition-colors duration-200 whitespace-nowrap cursor-pointer',
+                isExercisePage
                   ? 'text-[var(--color-accent-rust)] font-medium'
                   : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
               ]}
             >
-              {link.label}
-            </a>
-          ))}
+              Oefeningen
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" class="mt-px transition-transform duration-200" id="dropdown-chevron">
+                <path d="M3 5l3 3 3-3" />
+              </svg>
+            </button>
+            <div id="exercises-menu" class="hidden absolute top-full left-0 mt-2 py-2 min-w-[180px] bg-[var(--color-bg-primary)] border border-[var(--color-border)] rounded-lg shadow-lg">
+              {exerciseLinks.map((link) => (
+                <a
+                  href={link.href}
+                  class:list={[
+                    'block px-4 py-2 text-sm transition-colors duration-200',
+                    currentPath.startsWith(link.href)
+                      ? 'text-[var(--color-accent-rust)] font-medium bg-[var(--color-bg-secondary)]'
+                      : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)] hover:bg-[var(--color-bg-secondary)]',
+                  ]}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
           <a href="https://kdg-gaming-api.me-945.workers.dev/docs" target="_blank" rel="noopener" class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)] transition-colors duration-200 whitespace-nowrap">
             Gaming API ↗
           </a>
@@ -66,11 +118,45 @@ const navLinks = [
       <!-- Mobile menu -->
       <div id="mobile-menu" class="hidden lg:hidden border-t border-[var(--color-border)] bg-[var(--color-bg-primary)]">
         <div class="max-w-5xl mx-auto px-6 py-3 flex flex-col gap-2">
-          {navLinks.map((link) => (
+          <a
+            href={`${base}/naslagwerk`}
+            class:list={[
+              'py-2 text-sm transition-colors duration-200',
+              currentPath.includes('/naslagwerk')
+                ? 'text-[var(--color-accent-rust)] font-medium'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+            ]}
+          >
+            Naslagwerk
+          </a>
+          <a
+            href={`${base}/principes`}
+            class:list={[
+              'py-2 text-sm transition-colors duration-200',
+              currentPath.includes('/principes')
+                ? 'text-[var(--color-accent-rust)] font-medium'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+            ]}
+          >
+            REST-principes
+          </a>
+          <a
+            href={`${base}/uri-naamgeving`}
+            class:list={[
+              'py-2 text-sm transition-colors duration-200',
+              currentPath.includes('/uri-naamgeving')
+                ? 'text-[var(--color-accent-rust)] font-medium'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
+            ]}
+          >
+            URI-naamgeving
+          </a>
+          <span class="pt-2 pb-1 text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wider">Oefeningen</span>
+          {exerciseLinks.map((link) => (
             <a
               href={link.href}
               class:list={[
-                'py-2 text-sm transition-colors duration-200',
+                'py-2 pl-3 text-sm transition-colors duration-200',
                 currentPath.startsWith(link.href)
                   ? 'text-[var(--color-accent-rust)] font-medium'
                   : 'text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)]',
@@ -126,9 +212,27 @@ const navLinks = [
     </footer>
 
     <script>
+      // Mobile menu toggle
       const btn = document.getElementById('mobile-menu-btn');
       const menu = document.getElementById('mobile-menu');
       btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+
+      // Exercises dropdown
+      const dropdown = document.getElementById('exercises-dropdown');
+      const dropdownMenu = document.getElementById('exercises-menu');
+      const chevron = document.getElementById('dropdown-chevron');
+
+      dropdown?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = !dropdownMenu?.classList.contains('hidden');
+        dropdownMenu?.classList.toggle('hidden');
+        chevron?.classList.toggle('rotate-180', !isOpen);
+      });
+
+      document.addEventListener('click', () => {
+        dropdownMenu?.classList.add('hidden');
+        chevron?.classList.remove('rotate-180');
+      });
     </script>
   </body>
 </html>

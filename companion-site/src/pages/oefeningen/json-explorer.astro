@@ -175,7 +175,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       currentData = await res.json();
 
       $viewer.innerHTML = `<pre style="white-space: pre-wrap; word-break: break-word;">${renderJson(currentData, '', 1)}</pre>`;
-      $status.textContent = `${res.status} OK — ${API_BASE}${endpoint}`;
+      $status.textContent = `${res.status} OK – ${API_BASE}${endpoint}`;
 
       // Click to copy values
       $viewer.querySelectorAll('[data-path]').forEach(el => {

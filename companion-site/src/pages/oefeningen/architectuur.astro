@@ -65,7 +65,7 @@ import data from '../../data/architecture-layers.json';
             <div class="pb-4">
               <p class="font-medium text-sm" style="font-family: var(--font-display);">
                 {layer.label}
-                <span class="text-[var(--color-text-secondary)] font-normal"> — {layer.subtitle}</span>
+                <span class="text-[var(--color-text-secondary)] font-normal"> – {layer.subtitle}</span>
               </p>
               <p class="text-sm text-[var(--color-text-secondary)]">{layer.description}</p>
             </div>
@@ -291,7 +291,7 @@ import data from '../../data/architecture-layers.json';
       $feedbackResult.textContent = 'Perfect! Alle lagen staan in de juiste volgorde.';
       $feedbackResult.style.color = 'var(--color-accent-sage)';
       $feedback.className = 'feedback-correct mt-6 py-4';
-      $feedbackDetail.textContent = 'Dit is hoe het Layered System principe werkt — elke laag heeft zijn eigen verantwoordelijkheid.';
+      $feedbackDetail.textContent = 'Dit is hoe het Layered System principe werkt: elke laag heeft zijn eigen verantwoordelijkheid.';
       $explanation.classList.remove('hidden');
     } else {
       $feedbackResult.textContent = `${correct} van ${layers.length} lagen correct.`;

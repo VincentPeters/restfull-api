@@ -118,6 +118,13 @@ const isExercisePage = currentPath.includes('/oefeningen/');
           <a href="https://kdg-gaming-api.me-945.workers.dev/docs" target="_blank" rel="noopener" class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)] transition-colors duration-200 whitespace-nowrap">
             Gaming API ↗
           </a>
+          <button type="button" class="beamer-toggle" id="beamer-toggle-desktop" aria-label="Beamer mode toggle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+          </button>
         </div>
         <!-- Mobile hamburger -->
         <button id="mobile-menu-btn" class="lg:hidden text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] cursor-pointer" aria-label="Menu">
@@ -190,6 +197,13 @@ const isExercisePage = currentPath.includes('/oefeningen/');
           <a href="https://kdg-gaming-api.me-945.workers.dev/docs" target="_blank" rel="noopener" class="py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent-rust)] transition-colors duration-200">
             Gaming API ↗
           </a>
+          <button type="button" class="beamer-toggle mt-2" id="beamer-toggle-mobile" aria-label="Beamer mode toggle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+          </button>
         </div>
       </div>
     </nav>
@@ -234,6 +248,21 @@ const isExercisePage = currentPath.includes('/oefeningen/');
     </footer>
 
     <script>
+      // Beamer mode — apply early to prevent flash
+      (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlBeamer = urlParams.get('beamer');
+        if (urlBeamer === '1') {
+          document.documentElement.classList.add('beamer-mode');
+          localStorage.setItem('beamer-mode', 'on');
+        } else if (urlBeamer === '0') {
+          document.documentElement.classList.remove('beamer-mode');
+          localStorage.setItem('beamer-mode', 'off');
+        } else if (localStorage.getItem('beamer-mode') === 'on') {
+          document.documentElement.classList.add('beamer-mode');
+        }
+      })();
+
       // Mobile menu toggle
       const btn = document.getElementById('mobile-menu-btn');
       const menu = document.getElementById('mobile-menu');
@@ -255,6 +284,15 @@ const isExercisePage = currentPath.includes('/oefeningen/');
         dropdownMenu?.classList.add('hidden');
         chevron?.classList.remove('rotate-180');
       });
+
+      // Beamer mode toggle
+      function toggleBeamer() {
+        const isOn = document.documentElement.classList.toggle('beamer-mode');
+        localStorage.setItem('beamer-mode', isOn ? 'on' : 'off');
+      }
+
+      document.getElementById('beamer-toggle-desktop')?.addEventListener('click', toggleBeamer);
+      document.getElementById('beamer-toggle-mobile')?.addEventListener('click', toggleBeamer);
     </script>
   </body>
 </html>

@@ -150,3 +150,224 @@ a:hover {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ========================================
+   Beamer Mode — High-contrast projection
+   ======================================== */
+
+html.beamer-mode {
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F0F0F0;
+  --color-bg-code: #1A1A1A;
+  --color-text-primary: #111111;
+  --color-text-secondary: #3A3A3A;
+  --color-accent-rust: #B03E24;
+  --color-accent-sage: #2E5E40;
+  --color-accent-ochre: #9A7520;
+  --color-border: #AAAAAA;
+
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.3rem);
+}
+
+html.beamer-mode h1 {
+  font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.75rem);
+}
+
+html.beamer-mode h2 {
+  font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+}
+
+html.beamer-mode h3 {
+  font-size: clamp(1.3rem, 1.1rem + 0.75vw, 1.65rem);
+}
+
+/* Bump tiny text sizes */
+html.beamer-mode .text-xs,
+html.beamer-mode .text-\[10px\],
+html.beamer-mode .text-\[11px\] {
+  font-size: 0.875rem !important;
+}
+
+html.beamer-mode .text-sm {
+  font-size: 1rem !important;
+}
+
+/* Always show card borders */
+html.beamer-mode .border-transparent {
+  border-color: var(--color-border) !important;
+}
+
+/* Stronger table borders */
+html.beamer-mode tr {
+  border-color: var(--color-border) !important;
+}
+
+/* Remove opacity reductions */
+html.beamer-mode .opacity-40,
+html.beamer-mode .opacity-60,
+html.beamer-mode .opacity-70 {
+  opacity: 1 !important;
+}
+
+/* Code blocks: bigger text, brighter colors */
+html.beamer-mode .specimen {
+  font-size: 1rem;
+}
+
+html.beamer-mode code {
+  font-size: 0.95rem;
+}
+
+/* Dark code panels: boost all muted text inside */
+html.beamer-mode [class*="bg-[var(--color-bg-code)"] {
+  font-size: 0.875rem;
+  --color-accent-rust: #E06B52;
+  --color-accent-sage: #7DB89A;
+  --color-accent-ochre: #E8C255;
+}
+
+html.beamer-mode [class*="bg-[var(--color-bg-code)"] .text-\[\#6B6560\] {
+  color: #C8C0B6 !important;
+}
+
+html.beamer-mode [class*="bg-[var(--color-bg-code)"] .text-\[\#A89F94\] {
+  color: #D6CFC6 !important;
+}
+
+html.beamer-mode [class*="bg-[var(--color-bg-code)"] .text-\[10px\],
+html.beamer-mode [class*="bg-[var(--color-bg-code)"] .text-\[11px\] {
+  font-size: 0.875rem !important;
+}
+
+html.beamer-mode [class*="bg-[var(--color-bg-code)"] .text-xs {
+  font-size: 0.875rem !important;
+}
+
+/* SVG diagrams: remove opacity in beamer mode */
+html.beamer-mode svg text {
+  opacity: 1 !important;
+}
+
+/* SVG: brighten muted text fills */
+html.beamer-mode svg text[fill="#6B6560"] {
+  fill: #666 !important;
+}
+
+html.beamer-mode svg text[fill="#D6D0C8"] {
+  fill: #999 !important;
+}
+
+/* SVG: make accent text dark/black for projection readability */
+html.beamer-mode svg text[fill="#C4573A"] {
+  fill: #111111 !important;
+}
+
+html.beamer-mode svg text[fill="#5B7B6A"] {
+  fill: #111111 !important;
+}
+
+html.beamer-mode svg text[fill="#D4A843"] {
+  fill: #111111 !important;
+}
+
+/* SVG: boost very faint background rects */
+html.beamer-mode svg rect[opacity="0.06"] {
+  opacity: 0.2 !important;
+}
+
+html.beamer-mode svg rect[fill="#F7F3EE"] {
+  fill: #E8E8E8 !important;
+}
+
+html.beamer-mode svg rect[fill="#EDE8E1"] {
+  fill: #E0E0E0 !important;
+}
+
+/* SVG: boost opacity on all elements */
+html.beamer-mode svg rect[opacity],
+html.beamer-mode svg line[opacity],
+html.beamer-mode svg text[opacity],
+html.beamer-mode svg path[opacity] {
+  opacity: 1 !important;
+}
+
+/* SVG: make low-opacity background rects visible */
+html.beamer-mode svg rect[opacity="0.08"] {
+  opacity: 0.25 !important;
+}
+
+html.beamer-mode svg rect[opacity="0.12"] {
+  opacity: 0.3 !important;
+}
+
+html.beamer-mode svg rect[opacity="0.15"] {
+  opacity: 0.4 !important;
+}
+
+html.beamer-mode svg rect[opacity="0.2"] {
+  opacity: 0.45 !important;
+}
+
+/* SVG: fix cream backgrounds that disappear on white */
+html.beamer-mode svg rect[fill="#EDE8E1"] {
+  fill: #E0E0E0 !important;
+}
+
+html.beamer-mode svg rect[fill="#EDE8E1"][stroke] {
+  stroke: #AAAAAA !important;
+}
+
+/* SVG: boost muted strokes */
+html.beamer-mode svg rect[stroke="#D6D0C8"] {
+  stroke: #999999 !important;
+}
+
+html.beamer-mode svg line[stroke="#D6D0C8"] {
+  stroke: #999999 !important;
+}
+
+/* Nav pills and badges readable */
+html.beamer-mode [class*="rounded-full"][class*="text-\[10px\]"] {
+  font-size: 0.75rem !important;
+  font-weight: 600;
+}
+
+/* Keep nav text at original size to prevent overflow */
+html.beamer-mode nav .text-sm {
+  font-size: 0.875rem !important;
+}
+
+html.beamer-mode nav .text-xl {
+  font-size: 1.25rem !important;
+}
+
+/* Beamer toggle button */
+.beamer-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.beamer-toggle:hover {
+  border-color: var(--color-accent-rust);
+  color: var(--color-accent-rust);
+}
+
+html.beamer-mode .beamer-toggle {
+  background: var(--color-accent-rust);
+  border-color: var(--color-accent-rust);
+  color: #FFFFFF;
+}
+
+html.beamer-mode .beamer-toggle:hover {
+  opacity: 0.9;
+  color: #FFFFFF;
+}

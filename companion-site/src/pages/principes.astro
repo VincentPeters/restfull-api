@@ -446,6 +446,40 @@ const base = import.meta.env.BASE_URL;
       </div>
     </div>
 
+    <!-- Detailed layer breakdown -->
+    <div class="mt-10 bg-[var(--color-bg-secondary)] rounded-xl p-6">
+      <p class="text-sm font-medium mb-5" style="font-family: var(--font-display);">De 6 lagen van een REST API-architectuur</p>
+      <p class="text-sm text-[var(--color-text-secondary)] mb-6">
+        Een request reist van boven naar onder door elke laag. Elke laag heeft een eigen taak en weet niets over de andere lagen.
+      </p>
+      <div class="space-y-0">
+        {[
+          { num: '1', label: 'Client', subtitle: 'Browser, App of Script', desc: 'De client stuurt HTTP-requests naar de API. Dit kan een webbrowser, mobiele app, Python script of Postman zijn.', color: 'var(--color-accent-ochre)' },
+          { num: '2', label: 'Load Balancer', subtitle: 'Verkeersverdeling', desc: 'Verdeelt inkomende requests over meerdere servers, zodat de belasting gespreid wordt en alles bereikbaar blijft.', color: 'var(--color-accent-ochre)' },
+          { num: '3', label: 'API Gateway', subtitle: 'Rate Limiting & Routing', desc: 'Controleert rate limits (bijv. max 100 requests/min), valideert API keys en stuurt requests door naar de juiste service.', color: 'var(--color-accent-rust)' },
+          { num: '4', label: 'Authenticatie Server', subtitle: 'JWT & Rechten', desc: 'Controleert JWT tokens, checkt gebruikersrechten en bepaalt of de client toegang heeft tot de gevraagde resource.', color: 'var(--color-accent-rust)' },
+          { num: '5', label: 'Applicatie Server', subtitle: 'Business Logic', desc: 'Verwerkt de request, voert de business logic uit en haalt de gevraagde data op. Dit is het hart van de API.', color: 'var(--color-accent-sage)' },
+          { num: '6', label: 'Database', subtitle: 'Data Opslag', desc: 'Slaat alle data op. De applicatieserver praat met de database om resources te lezen, schrijven, updaten of verwijderen.', color: 'var(--color-accent-sage)' },
+        ].map(({ num, label, subtitle, desc, color }, i) => (
+          <div class="flex gap-4 items-start">
+            <div class="flex flex-col items-center">
+              <span class="w-8 h-8 flex items-center justify-center rounded-full text-xs shrink-0" style={`font-family: var(--font-code); background: color-mix(in oklch, ${color} 15%, transparent); color: ${color};`}>{num}</span>
+              {i < 5 && (
+                <div class="w-px h-6 opacity-30" style={`background: ${color};`}></div>
+              )}
+            </div>
+            <div class="pb-3">
+              <p class="font-medium text-sm" style="font-family: var(--font-display);">
+                {label}
+                <span class="text-[var(--color-text-secondary)] font-normal"> — {subtitle}</span>
+              </p>
+              <p class="text-sm text-[var(--color-text-secondary)]">{desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
     <div class="mt-8 pl-5 border-l-2 border-[var(--color-accent-ochre)]">
       <p class="text-sm text-[var(--color-text-secondary)]">
         <strong class="text-[var(--color-text-primary)]">Kernregel:</strong> De client stuurt een request naar één adres. Wat er achter de schermen gebeurt, is niet zijn probleem.

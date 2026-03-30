@@ -178,7 +178,7 @@ import data from '../../data/architecture-layers.json';
     const placedIds = placements.filter(Boolean);
     $source.innerHTML = '';
 
-    const available = draggableLayers.filter(l => !placedIds.includes(l.id));
+    const available = shuffle(draggableLayers.filter(l => !placedIds.includes(l.id)));
     available.forEach(layer => {
       const card = createCard(layer);
       $source.appendChild(card);

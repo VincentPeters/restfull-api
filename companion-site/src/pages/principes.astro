@@ -387,61 +387,74 @@ const base = import.meta.env.BASE_URL;
       </div>
 
       <!-- Visual: layered architecture -->
-      <div class="relative" role="img" aria-label="Gelaagde architectuur met client, gateway, load balancer en servers">
-        <svg viewBox="0 0 440 320" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
-          <!-- Client -->
-          <rect x="170" y="10" width="100" height="40" rx="8" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
-          <text x="220" y="34" text-anchor="middle" fill="#2D2A26" font-size="11" font-family="var(--font-body)">Client</text>
+      <div class="relative" role="img" aria-label="Gelaagde architectuur met alle 6 lagen van client tot database">
+        <svg viewBox="0 0 440 400" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
+          <!-- Layer 1: Client -->
+          <rect x="130" y="10" width="180" height="40" rx="8" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
+          <text x="220" y="28" text-anchor="middle" fill="#2D2A26" font-size="10" font-family="var(--font-body)" font-weight="500">Client</text>
+          <text x="220" y="42" text-anchor="middle" fill="#6B6560" font-size="7" font-family="var(--font-code)">browser · app · script</text>
 
-          <!-- Arrow down -->
-          <line x1="220" y1="50" x2="220" y2="72" stroke="#D6D0C8" stroke-width="1.5"/>
-          <polygon points="220,72 215,64 225,64" fill="#D6D0C8"/>
-
-          <!-- Layer 1: API Gateway -->
-          <rect x="100" y="76" width="240" height="44" rx="10" fill="none" stroke="#C4573A" stroke-width="1.5" stroke-dasharray="5 3"/>
-          <rect x="140" y="82" width="160" height="32" rx="6" fill="#C4573A" opacity="0.08"/>
-          <text x="220" y="100" text-anchor="middle" fill="#C4573A" font-size="10" font-family="var(--font-body)" font-weight="500">API Gateway</text>
-          <text x="220" y="112" text-anchor="middle" fill="#C4573A" font-size="7" font-family="var(--font-code)" opacity="0.7">auth · rate limiting · routing</text>
-
-          <!-- Arrow down -->
-          <line x1="220" y1="120" x2="220" y2="142" stroke="#D6D0C8" stroke-width="1.5"/>
-          <polygon points="220,142 215,134 225,134" fill="#D6D0C8"/>
+          <!-- Arrow -->
+          <line x1="220" y1="50" x2="220" y2="68" stroke="#D6D0C8" stroke-width="1.5"/>
+          <polygon points="220,68 215,60 225,60" fill="#D6D0C8"/>
 
           <!-- Layer 2: Load Balancer -->
-          <rect x="100" y="146" width="240" height="44" rx="10" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-dasharray="5 3"/>
-          <rect x="140" y="152" width="160" height="32" rx="6" fill="#D4A843" opacity="0.08"/>
-          <text x="220" y="170" text-anchor="middle" fill="#D4A843" font-size="10" font-family="var(--font-body)" font-weight="500">Load Balancer</text>
-          <text x="220" y="182" text-anchor="middle" fill="#D4A843" font-size="7" font-family="var(--font-code)" opacity="0.7">verdeelt verkeer over servers</text>
+          <rect x="100" y="72" width="240" height="40" rx="10" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <rect x="130" y="78" width="180" height="28" rx="6" fill="#D4A843" opacity="0.08"/>
+          <text x="220" y="93" text-anchor="middle" fill="#D4A843" font-size="10" font-family="var(--font-body)" font-weight="500">Load Balancer</text>
+          <text x="220" y="105" text-anchor="middle" fill="#D4A843" font-size="7" font-family="var(--font-code)" opacity="0.7">verdeelt verkeer over servers</text>
 
-          <!-- Arrows branching -->
-          <line x1="220" y1="190" x2="120" y2="224" stroke="#D6D0C8" stroke-width="1.5"/>
-          <line x1="220" y1="190" x2="220" y2="224" stroke="#D6D0C8" stroke-width="1.5"/>
-          <line x1="220" y1="190" x2="320" y2="224" stroke="#D6D0C8" stroke-width="1.5"/>
+          <!-- Arrow -->
+          <line x1="220" y1="112" x2="220" y2="130" stroke="#D6D0C8" stroke-width="1.5"/>
+          <polygon points="220,130 215,122 225,122" fill="#D6D0C8"/>
 
-          <!-- Layer 3: Servers -->
-          <rect x="70" y="228" width="100" height="40" rx="8" fill="#2D2A26"/>
-          <text x="120" y="252" text-anchor="middle" fill="#F7F3EE" font-size="10" font-family="var(--font-body)">Server A</text>
+          <!-- Layer 3: API Gateway -->
+          <rect x="100" y="134" width="240" height="40" rx="10" fill="none" stroke="#C4573A" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <rect x="130" y="140" width="180" height="28" rx="6" fill="#C4573A" opacity="0.08"/>
+          <text x="220" y="155" text-anchor="middle" fill="#C4573A" font-size="10" font-family="var(--font-body)" font-weight="500">API Gateway</text>
+          <text x="220" y="167" text-anchor="middle" fill="#C4573A" font-size="7" font-family="var(--font-code)" opacity="0.7">rate limiting · API key · routing</text>
 
-          <rect x="170" y="228" width="100" height="40" rx="8" fill="#2D2A26"/>
-          <text x="220" y="252" text-anchor="middle" fill="#F7F3EE" font-size="10" font-family="var(--font-body)">Server B</text>
+          <!-- Arrow -->
+          <line x1="220" y1="174" x2="220" y2="192" stroke="#D6D0C8" stroke-width="1.5"/>
+          <polygon points="220,192 215,184 225,184" fill="#D6D0C8"/>
 
-          <rect x="270" y="228" width="100" height="40" rx="8" fill="#2D2A26"/>
-          <text x="320" y="252" text-anchor="middle" fill="#F7F3EE" font-size="10" font-family="var(--font-body)">Server C</text>
+          <!-- Layer 4: Auth Server -->
+          <rect x="100" y="196" width="240" height="40" rx="10" fill="none" stroke="#C4573A" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <rect x="130" y="202" width="180" height="28" rx="6" fill="#C4573A" opacity="0.08"/>
+          <text x="220" y="217" text-anchor="middle" fill="#C4573A" font-size="10" font-family="var(--font-body)" font-weight="500">Authenticatie Server</text>
+          <text x="220" y="229" text-anchor="middle" fill="#C4573A" font-size="7" font-family="var(--font-code)" opacity="0.7">JWT tokens · gebruikersrechten</text>
 
-          <!-- Database -->
-          <line x1="120" y1="268" x2="220" y2="290" stroke="#D6D0C8" stroke-width="1"/>
-          <line x1="220" y1="268" x2="220" y2="290" stroke="#D6D0C8" stroke-width="1"/>
-          <line x1="320" y1="268" x2="220" y2="290" stroke="#D6D0C8" stroke-width="1"/>
+          <!-- Arrow -->
+          <line x1="220" y1="236" x2="220" y2="254" stroke="#D6D0C8" stroke-width="1.5"/>
+          <polygon points="220,254 215,246 225,246" fill="#D6D0C8"/>
 
-          <ellipse cx="220" cy="300" rx="50" ry="12" fill="#5B7B6A" opacity="0.15" stroke="#5B7B6A" stroke-width="1"/>
-          <text x="220" y="304" text-anchor="middle" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">Database</text>
+          <!-- Layer 5: App Server -->
+          <rect x="130" y="258" width="180" height="40" rx="8" fill="#2D2A26"/>
+          <text x="220" y="276" text-anchor="middle" fill="#F7F3EE" font-size="10" font-family="var(--font-body)" font-weight="500">Applicatie Server</text>
+          <text x="220" y="290" text-anchor="middle" fill="#6B6560" font-size="7" font-family="var(--font-code)">business logic · data verwerking</text>
+
+          <!-- Arrow -->
+          <line x1="220" y1="298" x2="220" y2="316" stroke="#D6D0C8" stroke-width="1.5"/>
+          <polygon points="220,316 215,308 225,308" fill="#D6D0C8"/>
+
+          <!-- Layer 6: Database -->
+          <rect x="130" y="320" width="180" height="40" rx="8" fill="#5B7B6A" opacity="0.15" stroke="#5B7B6A" stroke-width="1.5"/>
+          <text x="220" y="338" text-anchor="middle" fill="#5B7B6A" font-size="10" font-family="var(--font-body)" font-weight="500">Database</text>
+          <text x="220" y="352" text-anchor="middle" fill="#5B7B6A" font-size="7" font-family="var(--font-code)">data opslag · CRUD</text>
 
           <!-- Client's view bracket -->
-          <line x1="22" y1="10" x2="22" y2="310" stroke="#C4573A" stroke-width="1" opacity="0.3"/>
-          <line x1="22" y1="10" x2="32" y2="10" stroke="#C4573A" stroke-width="1" opacity="0.3"/>
-          <line x1="22" y1="310" x2="32" y2="310" stroke="#C4573A" stroke-width="1" opacity="0.3"/>
+          <line x1="28" y1="72" x2="28" y2="360" stroke="#C4573A" stroke-width="1" opacity="0.3"/>
+          <line x1="28" y1="72" x2="38" y2="72" stroke="#C4573A" stroke-width="1" opacity="0.3"/>
+          <line x1="28" y1="360" x2="38" y2="360" stroke="#C4573A" stroke-width="1" opacity="0.3"/>
+          <text x="22" y="220" text-anchor="middle" fill="#C4573A" font-size="8" font-family="var(--font-code)" opacity="0.5" transform="rotate(-90 22 220)">client ziet alleen "de API"</text>
 
-          <text x="16" y="164" text-anchor="middle" fill="#C4573A" font-size="8" font-family="var(--font-code)" opacity="0.5" transform="rotate(-90 16 164)">client ziet alleen "de API"</text>
+          <!-- Layer numbers -->
+          <text x="390" y="34" fill="#D6D0C8" font-size="9" font-family="var(--font-code)" opacity="0.5">1</text>
+          <text x="390" y="96" fill="#D4A843" font-size="9" font-family="var(--font-code)" opacity="0.5">2</text>
+          <text x="390" y="158" fill="#C4573A" font-size="9" font-family="var(--font-code)" opacity="0.5">3</text>
+          <text x="390" y="220" fill="#C4573A" font-size="9" font-family="var(--font-code)" opacity="0.5">4</text>
+          <text x="390" y="282" fill="#F7F3EE" font-size="9" font-family="var(--font-code)" opacity="0.5">5</text>
+          <text x="390" y="344" fill="#5B7B6A" font-size="9" font-family="var(--font-code)" opacity="0.5">6</text>
         </svg>
       </div>
     </div>

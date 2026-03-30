@@ -1,6 +1,7 @@
 [
   {
     "id": 1,
+    "description": "Geef alle games terug",
     "good": "/games",
     "bad": "/getGames",
     "rule": "Gebruik zelfstandige naamwoorden, geen werkwoorden",
@@ -8,6 +9,7 @@
   },
   {
     "id": 2,
+    "description": "Geef de collectie van games terug",
     "good": "/games",
     "bad": "/game",
     "rule": "Gebruik meervoudsvorm voor collecties",
@@ -15,6 +17,7 @@
   },
   {
     "id": 3,
+    "description": "Geef game 123 terug",
     "good": "/games/123",
     "bad": "/games?id=123",
     "rule": "Gebruik van ID voor specifieke resources",
@@ -22,6 +25,7 @@
   },
   {
     "id": 4,
+    "description": "Geef alle producten terug",
     "good": "/products",
     "bad": "/Products",
     "rule": "Gebruik kleine letters",
@@ -29,6 +33,7 @@
   },
   {
     "id": 5,
+    "description": "Geef alle verzendadressen terug",
     "good": "/shipping-addresses",
     "bad": "/shipping_addresses",
     "rule": "Gebruik koppeltekens (-) voor woorden in resource namen",
@@ -36,6 +41,7 @@
   },
   {
     "id": 6,
+    "description": "Geef alle verzendadressen terug",
     "good": "/shipping-addresses",
     "bad": "/shippingAddresses",
     "rule": "Gebruik koppeltekens (-), geen camelCase",
@@ -43,6 +49,7 @@
   },
   {
     "id": 7,
+    "description": "Geef alle orders van user 123 terug",
     "good": "/users/123/orders",
     "bad": "/orders?userId=123",
     "rule": "Gebruik hiërarchie voor het weergeven van relaties",
@@ -50,6 +57,7 @@
   },
   {
     "id": 8,
+    "description": "Geef alle RPG games terug",
     "good": "/games?genre=rpg",
     "bad": "/getRpgGames",
     "rule": "Gebruik query parameters voor filtering",
@@ -57,6 +65,7 @@
   },
   {
     "id": 9,
+    "description": "Geef games gesorteerd op rating terug, pagina 2",
     "good": "/games?sort=rating&page=2",
     "bad": "/games/sorted-by-rating/page-2",
     "rule": "Gebruik query parameters voor sortering en paginering",
@@ -64,6 +73,7 @@
   },
   {
     "id": 10,
+    "description": "Maak een nieuwe developer aan",
     "good": "/developers",
     "bad": "/createDeveloper",
     "rule": "Gebruik zelfstandige naamwoorden, geen werkwoorden",
@@ -71,6 +81,7 @@
   },
   {
     "id": 11,
+    "description": "Geef alle reviews van game 456 terug",
     "good": "/games/456/reviews",
     "bad": "/reviews-for-game-456",
     "rule": "Gebruik hiërarchie, geen beschrijvende paden",
@@ -78,6 +89,7 @@
   },
   {
     "id": 12,
+    "description": "Geef developer 789 terug",
     "good": "/developers/789",
     "bad": "/developer/get/789",
     "rule": "Geen werkwoorden, meervoudsvorm",
@@ -85,6 +97,7 @@
   },
   {
     "id": 13,
+    "description": "Geef alle PS5 games terug",
     "good": "/games?platform=PS5",
     "bad": "/ps5-games",
     "rule": "Gebruik query parameters voor filtering",
@@ -92,6 +105,7 @@
   },
   {
     "id": 14,
+    "description": "Geef alle Japanse developers terug",
     "good": "/developers?country=Japan",
     "bad": "/japanese-developers",
     "rule": "Gebruik query parameters voor filtering",
@@ -99,6 +113,7 @@
   },
   {
     "id": 15,
+    "description": "Geef review 456 van game 123 terug",
     "good": "/games/123/reviews/456",
     "bad": "/game-123-review-456",
     "rule": "Gebruik hiërarchie en ID's voor specifieke resources",
@@ -106,6 +121,7 @@
   },
   {
     "id": 16,
+    "description": "Geef alle order items terug",
     "good": "/order-items",
     "bad": "/orderItems",
     "rule": "Gebruik koppeltekens (-), geen camelCase",
@@ -113,6 +129,7 @@
   },
   {
     "id": 17,
+    "description": "Zoek games met 'zelda' in de naam",
     "good": "/games?search=zelda",
     "bad": "/search/games/zelda",
     "rule": "Gebruik query parameters voor zoekfunctionaliteit",
@@ -120,6 +137,7 @@
   },
   {
     "id": 18,
+    "description": "Geef de verzendadressen van user 42 terug",
     "good": "/users/42/shipping-addresses",
     "bad": "/users/42/ShippingAddresses",
     "rule": "Gebruik kleine letters en koppeltekens",
@@ -127,6 +145,7 @@
   },
   {
     "id": 19,
+    "description": "Geef alle reviews met score 5 terug",
     "good": "/reviews?score=5",
     "bad": "/five-star-reviews",
     "rule": "Gebruik query parameters voor filtering",
@@ -134,6 +153,7 @@
   },
   {
     "id": 20,
+    "description": "Geef alle games terug",
     "good": "/games",
     "bad": "/api/v1/getAllGames",
     "rule": "Geen werkwoorden, consistente naamgeving",

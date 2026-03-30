@@ -7,7 +7,7 @@ import data from '../../data/architecture-layers.json';
   <header class="mb-10">
     <h1 class="mb-3">Architectuur Builder</h1>
     <p class="text-[var(--color-text-secondary)] max-w-xl">
-      Sleep de lagen van een REST API-architectuur in de juiste volgorde, van client (bovenaan) tot database (onderaan).
+      Sleep de lagen van een REST API-architectuur in de juiste volgorde. Client en Database staan al vast.
     </p>
   </header>
 
@@ -17,14 +17,31 @@ import data from '../../data/architecture-layers.json';
       <div>
         <p class="text-sm text-[var(--color-text-secondary)] mb-4">Plaatsingsvolgorde (boven → onder)</p>
         <div id="drop-zone" class="space-y-3">
-          {data.layers.map((_, i) => (
+          <!-- Slot 0: Client (fixed) -->
+          <div class="fixed-layer rounded-lg h-16 flex items-center justify-center" data-slot="0" data-layer-id="client">
+            <div class="text-center">
+              <p class="text-sm font-medium">Client</p>
+              <p class="text-xs text-[var(--color-text-secondary)]">Browser, App of Node-RED</p>
+            </div>
+          </div>
+
+          <!-- Slots 1-4: Draggable targets -->
+          {[1, 2, 3, 4].map(i => (
             <div
               class="drop-slot border-2 border-dashed border-[var(--color-border)] rounded-lg h-16 flex items-center justify-center text-sm text-[var(--color-text-secondary)] transition-all duration-200"
               data-slot={i}
             >
-              <span class="slot-label">{i + 1}</span>
+              <span class="slot-label opacity-40">?</span>
             </div>
           ))}
+
+          <!-- Slot 5: Database (fixed) -->
+          <div class="fixed-layer rounded-lg h-16 flex items-center justify-center" data-slot="5" data-layer-id="database">
+            <div class="text-center">
+              <p class="text-sm font-medium">Database</p>
+              <p class="text-xs text-[var(--color-text-secondary)]">Data Opslag</p>
+            </div>
+          </div>
         </div>
 
         <div class="flex gap-3 mt-6">
@@ -45,7 +62,7 @@ import data from '../../data/architecture-layers.json';
 
       <!-- Source Cards -->
       <div>
-        <p class="text-sm text-[var(--color-text-secondary)] mb-4">Beschikbare lagen (sleep of klik)</p>
+        <p class="text-sm text-[var(--color-text-secondary)] mb-4">Beschikbare lagen</p>
         <div id="source" class="space-y-3"></div>
       </div>
     </div>
@@ -76,7 +93,12 @@ import data from '../../data/architecture-layers.json';
   </div>
 </BaseLayout>
 
-<style>
+<style is:global>
+  .fixed-layer {
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-secondary);
+    opacity: 0.6;
+  }
   .layer-card {
     padding: 0.75rem 1rem;
     border: 1px solid var(--color-border);
@@ -90,27 +112,26 @@ import data from '../../data/architecture-layers.json';
     border-color: var(--color-accent-ochre);
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
-  .layer-card.dragging {
-    opacity: 0.5;
+  .layer-card:active {
     cursor: grabbing;
   }
-  .layer-card.selected {
-    border-color: var(--color-accent-ochre);
-    background: color-mix(in oklch, var(--color-accent-ochre) 6%, var(--color-bg-primary));
-  }
-  .layer-card.placed {
-    opacity: 0.35;
-    pointer-events: none;
+  .layer-card.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
   }
   .drop-slot.over {
     border-color: var(--color-accent-ochre);
     background: color-mix(in oklch, var(--color-accent-ochre) 6%, transparent);
+    transform: scale(1.02);
   }
   .drop-slot.filled {
     border-style: solid;
     border-color: var(--color-border);
     background: var(--color-bg-secondary);
-    cursor: pointer;
+    cursor: grab;
+  }
+  .drop-slot.filled:hover {
+    border-color: var(--color-accent-ochre);
   }
   .drop-slot.correct {
     border-color: var(--color-accent-sage);
@@ -124,7 +145,10 @@ import data from '../../data/architecture-layers.json';
 
 <script>
   const gameEl = document.getElementById('arch-game')!;
-  const layers = JSON.parse(gameEl.dataset.layers || '[]');
+  const allLayers: any[] = JSON.parse(gameEl.dataset.layers || '[]');
+
+  // Only the 4 middle layers are draggable
+  const draggableLayers = allLayers.filter(l => l.id !== 'client' && l.id !== 'database');
 
   const $source = document.getElementById('source')!;
   const $dropZone = document.getElementById('drop-zone')!;
@@ -133,8 +157,9 @@ import data from '../../data/architecture-layers.json';
   const $feedbackDetail = document.getElementById('feedback-detail')!;
   const $explanation = document.getElementById('explanation-panel')!;
 
-  let selectedCard: HTMLElement | null = null;
-  let placements: (string | null)[] = new Array(layers.length).fill(null);
+  // Slots 1-4 hold the draggable layers
+  let placements: (string | null)[] = [null, null, null, null];
+  let dragSource: { type: 'source' | 'slot'; id: string; slotIdx?: number } | null = null;
 
   function shuffle<T>(arr: T[]): T[] {
     const a = [...arr];
@@ -145,122 +170,133 @@ import data from '../../data/architecture-layers.json';
     return a;
   }
 
-  function init() {
-    placements = new Array(layers.length).fill(null);
+  function getSlots(): HTMLElement[] {
+    return Array.from($dropZone.querySelectorAll('.drop-slot')) as HTMLElement[];
+  }
+
+  function renderSource() {
+    const placedIds = placements.filter(Boolean);
     $source.innerHTML = '';
-    $explanation.classList.add('hidden');
-    $feedback.classList.add('hidden');
 
-    // Reset slots
-    $dropZone.querySelectorAll('.drop-slot').forEach(slot => {
-      const s = slot as HTMLElement;
-      s.className = 'drop-slot border-2 border-dashed border-[var(--color-border)] rounded-lg h-16 flex items-center justify-center text-sm text-[var(--color-text-secondary)] transition-all duration-200';
-      const slotIdx = parseInt(s.dataset.slot || '0');
-      s.innerHTML = `<span class="slot-label">${slotIdx + 1}</span>`;
-    });
-
-    const shuffled = shuffle(layers);
-    shuffled.forEach((layer: any) => {
-      const card = document.createElement('div');
-      card.className = 'layer-card';
-      card.draggable = true;
-      card.dataset.layerId = layer.id;
-      card.innerHTML = `
-        <p class="text-sm font-medium">${layer.label}</p>
-        <p class="text-xs text-[var(--color-text-secondary)]">${layer.subtitle}</p>
-      `;
-
-      // Drag events
-      card.addEventListener('dragstart', (e) => {
-        card.classList.add('dragging');
-        e.dataTransfer!.setData('text/plain', layer.id);
-        e.dataTransfer!.effectAllowed = 'move';
-      });
-      card.addEventListener('dragend', () => card.classList.remove('dragging'));
-
-      // Click to select
-      card.addEventListener('click', () => {
-        if (card.classList.contains('placed')) return;
-        if (selectedCard === card) {
-          card.classList.remove('selected');
-          selectedCard = null;
-        } else {
-          $source.querySelectorAll('.layer-card').forEach(c => c.classList.remove('selected'));
-          card.classList.add('selected');
-          selectedCard = card;
-        }
-      });
-
+    const available = draggableLayers.filter(l => !placedIds.includes(l.id));
+    available.forEach(layer => {
+      const card = createCard(layer);
       $source.appendChild(card);
     });
   }
 
-  // Drop zone events
-  $dropZone.querySelectorAll('.drop-slot').forEach(slot => {
-    const s = slot as HTMLElement;
+  function createCard(layer: any): HTMLElement {
+    const card = document.createElement('div');
+    card.className = 'layer-card';
+    card.draggable = true;
+    card.dataset.layerId = layer.id;
+    card.innerHTML = `
+      <p class="text-sm font-medium">${layer.label}</p>
+      <p class="text-xs text-[var(--color-text-secondary)]">${layer.subtitle}</p>
+      <p class="text-xs text-[var(--color-text-secondary)] mt-1 opacity-70">${layer.description}</p>
+    `;
+
+    card.addEventListener('dragstart', (e) => {
+      card.classList.add('dragging');
+      dragSource = { type: 'source', id: layer.id };
+      e.dataTransfer!.setData('text/plain', layer.id);
+      e.dataTransfer!.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+
+    return card;
+  }
+
+  function renderSlot(slotEl: HTMLElement, slotIdx: number) {
+    const layerId = placements[slotIdx];
+    if (layerId) {
+      const layer = allLayers.find(l => l.id === layerId);
+      slotEl.classList.add('filled');
+      slotEl.classList.remove('correct', 'incorrect');
+      slotEl.draggable = true;
+      slotEl.innerHTML = `
+        <div class="text-center">
+          <p class="text-sm font-medium">${layer.label}</p>
+          <p class="text-xs text-[var(--color-text-secondary)]">${layer.subtitle}</p>
+        </div>
+      `;
+    } else {
+      slotEl.classList.remove('filled', 'correct', 'incorrect');
+      slotEl.draggable = false;
+      slotEl.innerHTML = `<span class="slot-label opacity-40">?</span>`;
+    }
+  }
+
+  function init() {
+    placements = [null, null, null, null];
+    $explanation.classList.add('hidden');
+    $feedback.classList.add('hidden');
+
+    getSlots().forEach((s, i) => renderSlot(s, i));
+    renderSource();
+  }
+
+  // Setup slot events
+  getSlots().forEach(s => {
+    const slotIdx = parseInt(s.dataset.slot || '1') - 1; // slots are 1-4, array is 0-3
+
+    // Drag from filled slot
+    s.addEventListener('dragstart', (e) => {
+      if (!s.classList.contains('filled')) { e.preventDefault(); return; }
+      const layerId = placements[slotIdx];
+      if (!layerId) { e.preventDefault(); return; }
+      dragSource = { type: 'slot', id: layerId, slotIdx };
+      e.dataTransfer!.setData('text/plain', layerId);
+      e.dataTransfer!.effectAllowed = 'move';
+      s.classList.add('dragging');
+    });
+    s.addEventListener('dragend', () => s.classList.remove('dragging'));
 
     s.addEventListener('dragover', (e) => {
       e.preventDefault();
       e.dataTransfer!.dropEffect = 'move';
       s.classList.add('over');
     });
-
     s.addEventListener('dragleave', () => s.classList.remove('over'));
 
     s.addEventListener('drop', (e) => {
       e.preventDefault();
       s.classList.remove('over');
       const layerId = e.dataTransfer!.getData('text/plain');
-      placeLayer(layerId, parseInt(s.dataset.slot || '0'));
+      if (!layerId || !dragSource) return;
+
+      if (dragSource.type === 'slot' && dragSource.slotIdx !== undefined) {
+        // Swap between slots
+        const fromIdx = dragSource.slotIdx;
+        const existingInTarget = placements[slotIdx];
+        placements[slotIdx] = layerId;
+        placements[fromIdx] = existingInTarget;
+
+        const fromSlot = getSlots()[fromIdx];
+        renderSlot(fromSlot, fromIdx);
+        renderSlot(s, slotIdx);
+      } else {
+        // From source to slot
+        const existingInTarget = placements[slotIdx];
+        placements[slotIdx] = layerId;
+        renderSlot(s, slotIdx);
+
+        // If slot was already filled, the old one goes back to source
+        // renderSource handles this automatically
+      }
+
+      renderSource();
+      dragSource = null;
     });
 
-    // Click to place selected card
+    // Click filled slot to return to source
     s.addEventListener('click', () => {
-      const slotIdx = parseInt(s.dataset.slot || '0');
-      if (s.classList.contains('filled')) {
-        // Remove layer from slot
-        const layerId = placements[slotIdx];
-        if (layerId) {
-          placements[slotIdx] = null;
-          s.classList.remove('filled');
-          s.innerHTML = `<span class="slot-label">${slotIdx + 1}</span>`;
-          // Un-place the card
-          const card = $source.querySelector(`[data-layer-id="${layerId}"]`) as HTMLElement;
-          if (card) card.classList.remove('placed');
-        }
-        return;
-      }
-      if (selectedCard) {
-        placeLayer(selectedCard.dataset.layerId!, slotIdx);
-        selectedCard.classList.remove('selected');
-        selectedCard = null;
-      }
+      if (!s.classList.contains('filled')) return;
+      placements[slotIdx] = null;
+      renderSlot(s, slotIdx);
+      renderSource();
     });
   });
-
-  function placeLayer(layerId: string, slotIdx: number) {
-    // If slot already filled, swap back
-    if (placements[slotIdx]) {
-      const oldId = placements[slotIdx];
-      const oldCard = $source.querySelector(`[data-layer-id="${oldId}"]`) as HTMLElement;
-      if (oldCard) oldCard.classList.remove('placed');
-    }
-
-    placements[slotIdx] = layerId;
-    const layer = layers.find((l: any) => l.id === layerId);
-    const slot = $dropZone.querySelector(`[data-slot="${slotIdx}"]`) as HTMLElement;
-
-    slot.classList.add('filled');
-    slot.innerHTML = `
-      <div class="text-center">
-        <p class="text-sm font-medium">${layer.label}</p>
-        <p class="text-xs text-[var(--color-text-secondary)]">${layer.subtitle}</p>
-      </div>
-    `;
-
-    const card = $source.querySelector(`[data-layer-id="${layerId}"]`) as HTMLElement;
-    if (card) card.classList.add('placed');
-  }
 
   document.getElementById('check-btn')!.addEventListener('click', () => {
     if (placements.some(p => p === null)) {
@@ -273,11 +309,11 @@ import data from '../../data/architecture-layers.json';
     }
 
     let correct = 0;
-    const slots = $dropZone.querySelectorAll('.drop-slot');
-    slots.forEach((slot, i) => {
-      const s = slot as HTMLElement;
+    const slots = getSlots();
+    slots.forEach((s, i) => {
       const placedId = placements[i];
-      const expected = layers.find((l: any) => l.order === i + 1);
+      // Slots 1-4 map to order 2-5
+      const expected = allLayers.find(l => l.order === i + 2);
       s.classList.remove('correct', 'incorrect');
       if (placedId === expected.id) {
         s.classList.add('correct');
@@ -287,17 +323,17 @@ import data from '../../data/architecture-layers.json';
       }
     });
 
-    if (correct === layers.length) {
+    if (correct === 4) {
       $feedbackResult.textContent = 'Perfect! Alle lagen staan in de juiste volgorde.';
       $feedbackResult.style.color = 'var(--color-accent-sage)';
       $feedback.className = 'feedback-correct mt-6 py-4';
       $feedbackDetail.textContent = 'Dit is hoe het Layered System principe werkt: elke laag heeft zijn eigen verantwoordelijkheid.';
       $explanation.classList.remove('hidden');
     } else {
-      $feedbackResult.textContent = `${correct} van ${layers.length} lagen correct.`;
+      $feedbackResult.textContent = `${correct} van 4 lagen correct.`;
       $feedbackResult.style.color = 'var(--color-accent-rust)';
       $feedback.className = 'feedback-incorrect mt-6 py-4';
-      $feedbackDetail.textContent = 'De groene lagen staan goed, de rode niet. Denk na over de volgorde waarin een request verwerkt wordt.';
+      $feedbackDetail.textContent = 'Groene lagen staan goed, rode niet. Denk na over de volgorde waarin een request verwerkt wordt.';
     }
     $feedback.classList.remove('hidden');
   });

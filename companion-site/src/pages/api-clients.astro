@@ -69,14 +69,14 @@ const base = import.meta.env.BASE_URL;
         <div class="space-y-3 text-[12px]" style="font-family: var(--font-code);">
           <div>
             <span class="text-[var(--color-accent-sage)]">$</span>
-            <span class="text-[#F7F3EE]"> curl https://randomuser.me/api/</span>
+            <span class="text-[#F7F3EE]"> curl https://kdg-gaming-api.me-945.workers.dev/games</span>
           </div>
           <div class="pl-2 text-[11px] text-[#A89F94] leading-relaxed">
-            <span class="text-[#6B6560]">{'{"'}</span><span class="text-[var(--color-accent-ochre)]">results</span><span class="text-[#6B6560]">{'": [{"'}</span><span class="text-[var(--color-accent-ochre)]">name</span><span class="text-[#6B6560]">{'": {'}</span><br/>
-            <span class="pl-4 text-[#6B6560]">"</span><span class="text-[var(--color-accent-ochre)]">first</span><span class="text-[#6B6560]">": "</span><span class="text-[var(--color-accent-sage)]">John</span><span class="text-[#6B6560]">",</span><br/>
-            <span class="pl-4 text-[#6B6560]">"</span><span class="text-[var(--color-accent-ochre)]">last</span><span class="text-[#6B6560]">": "</span><span class="text-[var(--color-accent-sage)]">Doe</span><span class="text-[#6B6560]">"</span><br/>
-            <span class="text-[#6B6560]">{'}, "'}</span><span class="text-[var(--color-accent-ochre)]">email</span><span class="text-[#6B6560]">{'": "'}</span><span class="text-[var(--color-accent-sage)]">john@example.com</span><span class="text-[#6B6560]">"</span><br/>
-            <span class="text-[#6B6560]">{'}]}'}</span>
+            <span class="text-[#6B6560]">{'[{"'}</span><span class="text-[var(--color-accent-ochre)]">id</span><span class="text-[#6B6560]">{'": "'}</span><span class="text-[var(--color-accent-sage)]">abc-123</span><span class="text-[#6B6560]">{'",'}  </span><br/>
+            <span class="pl-4 text-[#6B6560]">"</span><span class="text-[var(--color-accent-ochre)]">title</span><span class="text-[#6B6560]">": "</span><span class="text-[var(--color-accent-sage)]">Hades</span><span class="text-[#6B6560]">",</span><br/>
+            <span class="pl-4 text-[#6B6560]">"</span><span class="text-[var(--color-accent-ochre)]">genre</span><span class="text-[#6B6560]">": "</span><span class="text-[var(--color-accent-sage)]">roguelike</span><span class="text-[#6B6560]">",</span><br/>
+            <span class="pl-4 text-[#6B6560]">"</span><span class="text-[var(--color-accent-ochre)]">platform</span><span class="text-[#6B6560]">": "</span><span class="text-[var(--color-accent-sage)]">PC</span><span class="text-[#6B6560]">"</span><br/>
+            <span class="text-[#6B6560]">{'}]'}</span>
           </div>
         </div>
       </div>
@@ -87,10 +87,10 @@ const base = import.meta.env.BASE_URL;
       <p class="text-sm font-medium mb-4" style="font-family: var(--font-display);">Veelgebruikte cURL commando's</p>
       <div class="grid sm:grid-cols-2 gap-3">
         {[
-          { cmd: 'curl https://api.example.com/games', desc: 'GET request (standaard)' },
-          { cmd: 'curl -X POST -d \'{"title":"Hades"}\' -H "Content-Type: application/json" https://api.example.com/games', desc: 'POST met JSON body' },
-          { cmd: 'curl -X DELETE https://api.example.com/games/42', desc: 'DELETE request' },
-          { cmd: 'curl -v https://api.example.com/games', desc: 'Verbose: toon headers en details' },
+          { cmd: 'curl https://kdg-gaming-api.me-945.workers.dev/games', desc: 'GET request (standaard)' },
+          { cmd: 'curl -X POST -d \'{"title":"Hades","genre":"roguelike"}\' -H "Content-Type: application/json" -H "api-key: jouw-key" https://kdg-gaming-api.me-945.workers.dev/games', desc: 'POST met JSON body en API key' },
+          { cmd: 'curl -X DELETE -H "api-key: jouw-key" https://kdg-gaming-api.me-945.workers.dev/games/abc-123', desc: 'DELETE request met API key' },
+          { cmd: 'curl -v https://kdg-gaming-api.me-945.workers.dev/games', desc: 'Verbose: toon headers en details' },
         ].map(({ cmd, desc }) => (
           <div class="specimen rounded-lg p-3">
             <p class="text-[10px] text-[#6B6560] mb-1.5">{desc}</p>
@@ -154,7 +154,7 @@ const base = import.meta.env.BASE_URL;
           <text x="54" y="70" text-anchor="middle" fill="#5B7B6A" font-size="11" font-weight="600" font-family="var(--font-code)">GET</text>
 
           <rect x="90" y="52" width="270" height="28" rx="6" fill="#F7F3EE" stroke="#D6D0C8" stroke-width="1"/>
-          <text x="100" y="70" fill="#6B6560" font-size="9" font-family="var(--font-code)">https://uselessfacts.jsph.pl/random.json</text>
+          <text x="100" y="70" fill="#6B6560" font-size="9" font-family="var(--font-code)">https://kdg-gaming-api.me-945.workers.dev/games</text>
 
           <rect x="366" y="52" width="50" height="28" rx="6" fill="#D4A843" opacity="0.2" stroke="#D4A843" stroke-width="1"/>
           <text x="391" y="70" text-anchor="middle" fill="#D4A843" font-size="9" font-weight="600" font-family="var(--font-code)">Send</text>
@@ -178,20 +178,20 @@ const base = import.meta.env.BASE_URL;
 
           <!-- JSON response -->
           <rect x="24" y="156" width="392" height="140" rx="6" fill="#2D2A26"/>
-          <text x="34" y="174" fill="#6B6560" font-size="9" font-family="var(--font-code)">{'{'}</text>
+          <text x="34" y="174" fill="#6B6560" font-size="9" font-family="var(--font-code)">[{'{'}</text>
           <text x="46" y="190" fill="#D4A843" font-size="9" font-family="var(--font-code)">"id"</text>
           <text x="72" y="190" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
-          <text x="80" y="190" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"98c8b13"</text>
-          <text x="46" y="206" fill="#D4A843" font-size="9" font-family="var(--font-code)">"text"</text>
+          <text x="80" y="190" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"abc-123"</text>
+          <text x="46" y="206" fill="#D4A843" font-size="9" font-family="var(--font-code)">"title"</text>
           <text x="80" y="206" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
-          <text x="90" y="206" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"A bolt of lightning..."</text>
-          <text x="46" y="222" fill="#D4A843" font-size="9" font-family="var(--font-code)">"source"</text>
-          <text x="96" y="222" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
-          <text x="104" y="222" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"internet"</text>
-          <text x="46" y="238" fill="#D4A843" font-size="9" font-family="var(--font-code)">"language"</text>
-          <text x="110" y="238" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
-          <text x="118" y="238" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"en"</text>
-          <text x="34" y="254" fill="#6B6560" font-size="9" font-family="var(--font-code)">{'}'}</text>
+          <text x="90" y="206" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"Hades"</text>
+          <text x="46" y="222" fill="#D4A843" font-size="9" font-family="var(--font-code)">"genre"</text>
+          <text x="88" y="222" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
+          <text x="96" y="222" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"roguelike"</text>
+          <text x="46" y="238" fill="#D4A843" font-size="9" font-family="var(--font-code)">"platform"</text>
+          <text x="104" y="238" fill="#6B6560" font-size="9" font-family="var(--font-code)">:</text>
+          <text x="112" y="238" fill="#5B7B6A" font-size="9" font-family="var(--font-code)">"PC"</text>
+          <text x="34" y="254" fill="#6B6560" font-size="9" font-family="var(--font-code)">{'}]'}</text>
 
           <!-- Status bar -->
           <rect x="24" y="274" width="392" height="20" rx="4" fill="#D6D0C8" opacity="0.5"/>
@@ -260,19 +260,19 @@ const base = import.meta.env.BASE_URL;
           <span class="w-3 h-3 rounded-full bg-[#C4573A] opacity-60"></span>
           <span class="w-3 h-3 rounded-full bg-[#D4A843] opacity-60"></span>
           <span class="w-3 h-3 rounded-full bg-[#5B7B6A] opacity-60"></span>
-          <span class="ml-2 text-[10px] text-[#6B6560]" style="font-family: var(--font-code);">joke.py</span>
+          <span class="ml-2 text-[10px] text-[#6B6560]" style="font-family: var(--font-code);">games.py</span>
         </div>
         <div class="text-[11px] leading-relaxed" style="font-family: var(--font-code);">
           <div><span class="text-[var(--color-accent-rust)]">import</span> <span class="text-[#F7F3EE]">requests</span></div>
-          <div class="mt-2"><span class="text-[#6B6560]"># Stuur een GET request</span></div>
+          <div class="mt-2"><span class="text-[#6B6560]"># Haal alle games op</span></div>
           <div><span class="text-[#F7F3EE]">response</span> <span class="text-[#A89F94]">=</span> <span class="text-[#F7F3EE]">requests.</span><span class="text-[var(--color-accent-ochre)]">get</span><span class="text-[#A89F94]">(</span></div>
-          <div class="pl-4"><span class="text-[var(--color-accent-sage)]">'https://official-joke-api.appspot.com/random_joke'</span></div>
+          <div class="pl-4"><span class="text-[var(--color-accent-sage)]">'https://kdg-gaming-api.me-945.workers.dev/games'</span></div>
           <div><span class="text-[#A89F94]">)</span></div>
           <div class="mt-2"><span class="text-[#6B6560]"># Parse de JSON response</span></div>
-          <div><span class="text-[#F7F3EE]">joke</span> <span class="text-[#A89F94]">=</span> <span class="text-[#F7F3EE]">response.</span><span class="text-[var(--color-accent-ochre)]">json</span><span class="text-[#A89F94]">()</span></div>
-          <div class="mt-2"><span class="text-[#6B6560]"># Gebruik de data</span></div>
-          <div><span class="text-[var(--color-accent-ochre)]">print</span><span class="text-[#A89F94]">(</span><span class="text-[var(--color-accent-sage)]">f'</span><span class="text-[var(--color-accent-rust)]">{'{'}</span><span class="text-[#F7F3EE]">joke["setup"]</span><span class="text-[var(--color-accent-rust)]">{'}'}</span><span class="text-[var(--color-accent-sage)]">'</span><span class="text-[#A89F94]">)</span></div>
-          <div><span class="text-[var(--color-accent-ochre)]">print</span><span class="text-[#A89F94]">(</span><span class="text-[var(--color-accent-sage)]">f'</span><span class="text-[var(--color-accent-rust)]">{'{'}</span><span class="text-[#F7F3EE]">joke["punchline"]</span><span class="text-[var(--color-accent-rust)]">{'}'}</span><span class="text-[var(--color-accent-sage)]">'</span><span class="text-[#A89F94]">)</span></div>
+          <div><span class="text-[#F7F3EE]">games</span> <span class="text-[#A89F94]">=</span> <span class="text-[#F7F3EE]">response.</span><span class="text-[var(--color-accent-ochre)]">json</span><span class="text-[#A89F94]">()</span></div>
+          <div class="mt-2"><span class="text-[#6B6560]"># Toon elke game</span></div>
+          <div><span class="text-[var(--color-accent-rust)]">for</span> <span class="text-[#F7F3EE]">game</span> <span class="text-[var(--color-accent-rust)]">in</span> <span class="text-[#F7F3EE]">games</span><span class="text-[#A89F94]">:</span></div>
+          <div class="pl-4"><span class="text-[var(--color-accent-ochre)]">print</span><span class="text-[#A89F94]">(</span><span class="text-[var(--color-accent-sage)]">f'</span><span class="text-[var(--color-accent-rust)]">{'{'}</span><span class="text-[#F7F3EE]">game["title"]</span><span class="text-[var(--color-accent-rust)]">{'}'}</span><span class="text-[var(--color-accent-sage)]"> - </span><span class="text-[var(--color-accent-rust)]">{'{'}</span><span class="text-[#F7F3EE]">game["genre"]</span><span class="text-[var(--color-accent-rust)]">{'}'}</span><span class="text-[var(--color-accent-sage)]">'</span><span class="text-[#A89F94]">)</span></div>
         </div>
       </div>
     </div>
@@ -284,7 +284,7 @@ const base = import.meta.env.BASE_URL;
           <!-- Step 1: Code -->
           <rect x="10" y="20" width="140" height="60" rx="10" fill="#EDE8E1" stroke="#D6D0C8" stroke-width="1.5"/>
           <text x="80" y="46" text-anchor="middle" fill="#2D2A26" font-size="11" font-family="var(--font-body)" font-weight="500">Python script</text>
-          <text x="80" y="62" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">requests.get(url)</text>
+          <text x="80" y="62" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">requests.get(/games)</text>
 
           <!-- Arrow -->
           <line x1="154" y1="50" x2="210" y2="50" stroke="#D4A843" stroke-width="1.5" stroke-dasharray="6 3"/>
@@ -304,7 +304,7 @@ const base = import.meta.env.BASE_URL;
           <!-- Step 3: Parse -->
           <rect x="418" y="20" width="140" height="60" rx="10" fill="#D4A843" opacity="0.1" stroke="#D4A843" stroke-width="1.5"/>
           <text x="488" y="46" text-anchor="middle" fill="#D4A843" font-size="11" font-family="var(--font-body)" font-weight="500">.json()</text>
-          <text x="488" y="62" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">Python dict</text>
+          <text x="488" y="62" text-anchor="middle" fill="#6B6560" font-size="8" font-family="var(--font-code)">Python list</text>
 
           <!-- Arrow -->
           <line x1="562" y1="50" x2="618" y2="50" stroke="#C4573A" stroke-width="1.5" stroke-dasharray="6 3"/>

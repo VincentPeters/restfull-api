@@ -8,6 +8,7 @@ import challenges from '../../data/uri-challenges.json';
     <h1 class="mb-3">URI Builder</h1>
     <p class="text-[var(--color-text-secondary)] max-w-xl">
       Lees het scenario en typ de juiste RESTful URI. Gebruik hints als je vastloopt.
+      Bekijk de <a href="https://kdg-gaming-api.me-945.workers.dev/docs" target="_blank" rel="noopener" class="text-[var(--color-accent-ochre)] underline hover:opacity-80">API documentatie</a> als je de endpoints wil opzoeken.
     </p>
   </header>
 
@@ -103,6 +104,8 @@ import challenges from '../../data/uri-challenges.json';
   let attempted = 0;
   let hintIndex = 0;
   let answered = false;
+  let attempts = 0;
+  const MAX_ATTEMPTS = 3;
 
   const $ = (id: string) => document.getElementById(id)!;
   const $input = $('uri-input') as HTMLInputElement;
@@ -165,13 +168,14 @@ import challenges from '../../data/uri-challenges.json';
   function render() {
     if (index >= challenges.length) { showEnd(); return; }
     answered = false;
+    attempts = 0;
     hintIndex = 0;
     const c = challenges[index];
 
     $('current').textContent = String(index + 1);
     $('score').textContent = String(score);
     $('attempted').textContent = String(attempted);
-    $('scenario').textContent = c.scenario;
+    $('scenario').innerHTML = c.scenario.replace(/'([^']+)'/g, '<code class="inline-flex items-center px-2 py-0.5 rounded text-sm font-medium bg-[var(--color-accent-ochre)]/15 text-[var(--color-accent-ochre)]" style="font-family: var(--font-code);">$1</code>');
 
     const badge = $('difficulty-badge');
     const dc = difficultyColors[c.difficulty] || difficultyColors.beginner;
@@ -197,31 +201,58 @@ import challenges from '../../data/uri-challenges.json';
     const value = $input.value.trim();
     if (!value) { $input.focus(); return; }
 
-    answered = true;
-    attempted++;
     const c = challenges[index];
     const correct = checkAnswer(value, c);
-    if (correct) score++;
-
-    $input.disabled = true;
-    $('check-btn').classList.add('hidden');
-    $('hint-btn').classList.add('hidden');
+    attempts++;
 
     const $fb = $('feedback');
-    $('feedback-result').textContent = correct ? 'Correct!' : 'Niet juist';
-    $('feedback-result').style.color = correct ? 'var(--color-accent-sage)' : 'var(--color-accent-rust)';
-    $fb.className = correct ? 'feedback-correct mb-6' : 'feedback-incorrect mb-6';
-    $('feedback-rule').textContent = c.rule;
-    $('feedback-explanation').textContent = c.explanation;
 
-    if (!correct) {
+    if (correct) {
+      answered = true;
+      attempted++;
+      score++;
+
+      $input.disabled = true;
+      $('check-btn').classList.add('hidden');
+      $('hint-btn').classList.add('hidden');
+
+      $('feedback-result').textContent = 'Correct!';
+      $('feedback-result').style.color = 'var(--color-accent-sage)';
+      $fb.className = 'feedback-correct mb-6';
+      $('feedback-rule').textContent = c.rule;
+      $('feedback-explanation').textContent = c.explanation;
+
+      $('score').textContent = String(score);
+      $('attempted').textContent = String(attempted);
+      $('next-btn').classList.remove('hidden');
+    } else if (attempts >= MAX_ATTEMPTS) {
+      answered = true;
+      attempted++;
+
+      $input.disabled = true;
+      $('check-btn').classList.add('hidden');
+      $('hint-btn').classList.add('hidden');
+
+      $('feedback-result').textContent = 'Niet juist';
+      $('feedback-result').style.color = 'var(--color-accent-rust)';
+      $fb.className = 'feedback-incorrect mb-6';
+      $('feedback-rule').textContent = c.rule;
+      $('feedback-explanation').textContent = c.explanation;
       $('correct-uri').textContent = c.correctUri;
       $('correct-answer').classList.remove('hidden');
+
+      $('score').textContent = String(score);
+      $('attempted').textContent = String(attempted);
+      $('next-btn').classList.remove('hidden');
+    } else {
+      $('feedback-result').textContent = `Niet juist — nog ${MAX_ATTEMPTS - attempts} ${MAX_ATTEMPTS - attempts === 1 ? 'poging' : 'pogingen'} over`;
+      $('feedback-result').style.color = 'var(--color-accent-rust)';
+      $fb.className = 'feedback-incorrect mb-6';
+      $('feedback-rule').textContent = '';
+      $('feedback-explanation').textContent = '';
     }
 
-    $('score').textContent = String(score);
-    $('attempted').textContent = String(attempted);
-    $('next-btn').classList.remove('hidden');
+    $fb.classList.remove('hidden');
   }
 
   function showHint() {
@@ -254,6 +285,7 @@ import challenges from '../../data/uri-challenges.json';
   $('next-btn').addEventListener('click', () => { index++; render(); });
   $('restart-btn').addEventListener('click', start);
   $input.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+  $input.addEventListener('paste', (e) => e.preventDefault());
 
   start();
 </script>

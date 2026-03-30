@@ -24,6 +24,9 @@ import pairs from '../../data/uri-spotter.json';
       </p>
     </div>
 
+    <!-- Description -->
+    <p id="description" class="text-lg font-medium text-[var(--color-text-primary)] mb-4" style="font-family: var(--font-display);"></p>
+
     <!-- URI Pair -->
     <div class="grid md:grid-cols-2 gap-4 mb-6">
       <button id="option-a" class="specimen text-left cursor-pointer rounded-lg transition-all duration-300 hover:ring-2 hover:ring-[var(--color-accent-ochre)]/30 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-ochre)]/50">
@@ -75,6 +78,7 @@ import pairs from '../../data/uri-spotter.json';
   const $optionB = document.getElementById('option-b') as HTMLButtonElement;
   const $uriA = document.getElementById('uri-a')!;
   const $uriB = document.getElementById('uri-b')!;
+  const $description = document.getElementById('description')!;
   const $feedback = document.getElementById('feedback')!;
   const $feedbackResult = document.getElementById('feedback-result')!;
   const $feedbackRule = document.getElementById('feedback-rule')!;
@@ -116,6 +120,7 @@ import pairs from '../../data/uri-spotter.json';
     const pair = shuffled[index];
     goodSide = Math.random() > 0.5 ? 'a' : 'b';
 
+    $description.textContent = pair.description;
     $uriA.textContent = goodSide === 'a' ? pair.good : pair.bad;
     $uriB.textContent = goodSide === 'b' ? pair.good : pair.bad;
 

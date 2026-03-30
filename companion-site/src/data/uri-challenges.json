@@ -52,22 +52,22 @@
   {
     "id": 6,
     "difficulty": "intermediate",
-    "scenario": "Haal alle games op voor het platform 'PS5', gesorteerd op rating.",
-    "correctUri": "/games?platform=PS5&sort=rating",
-    "acceptAlternatives": ["/games?platform=PS5&sort=rating", "/games?sort=rating&platform=PS5"],
-    "hints": ["Combineer meerdere query parameters met &", "Filtering en sortering zijn query parameters"],
-    "rule": "Gebruik query parameters voor filtering, sortering en paginering",
-    "explanation": "Meerdere filters combineer je: /games?platform=PS5&sort=rating"
+    "scenario": "Haal alle games op voor het platform 'PS5' met een rating van 4.",
+    "correctUri": "/games?platform=PS5&rating=4",
+    "acceptAlternatives": ["/games?rating=4&platform=PS5"],
+    "hints": ["Combineer meerdere query parameters met &", "Zowel platform als rating zijn filters"],
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Meerdere filters combineer je: /games?platform=PS5&rating=4"
   },
   {
     "id": 7,
     "difficulty": "intermediate",
-    "scenario": "Haal pagina 2 op van alle games in het genre 'adventure'.",
-    "correctUri": "/games?genre=adventure&page=2",
-    "acceptAlternatives": ["/games?page=2&genre=adventure"],
-    "hints": ["Paginering is ook een query parameter", "Combineer genre-filter met page"],
-    "rule": "Gebruik query parameters voor filtering, sortering en paginering",
-    "explanation": "Paginering combineert met filtering: /games?genre=adventure&page=2"
+    "scenario": "Haal alle adventure games op die je bezit.",
+    "correctUri": "/games?genre=adventure&owned=true",
+    "acceptAlternatives": ["/games?owned=true&genre=adventure"],
+    "hints": ["Beide zijn query parameters op /games", "Combineer genre en owned"],
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Filters combineer je met &: /games?genre=adventure&owned=true"
   },
   {
     "id": 8,
@@ -102,22 +102,22 @@
   {
     "id": 11,
     "difficulty": "advanced",
-    "scenario": "Ontwerp een endpoint om de verzend-adressen van een gebruiker met ID 42 op te halen.",
-    "correctUri": "/users/42/shipping-addresses",
+    "scenario": "Haal alle reviews op van game 'abc-123' met een score van 5.",
+    "correctUri": "/games/abc-123/reviews?score=5",
     "acceptAlternatives": [],
-    "hints": ["Gebruik koppeltekens voor samengestelde woorden", "Hiërarchie: user → adressen"],
-    "rule": "Gebruik koppeltekens (-) voor woorden in resource namen",
-    "explanation": "Samengestelde woorden met koppeltekens en hiërarchie: /users/42/shipping-addresses"
+    "hints": ["Reviews zitten genest onder games", "Score is een query parameter op reviews"],
+    "rule": "Combinatie van hiërarchie en query parameters",
+    "explanation": "Hiërarchie voor de relatie, query parameter voor de filter: /games/abc-123/reviews?score=5"
   },
   {
     "id": 12,
     "difficulty": "advanced",
-    "scenario": "Ontwerp een endpoint om alle bestellingen van klant 'cust-99' te bekijken, gefilterd op status 'delivered'.",
-    "correctUri": "/customers/cust-99/orders?status=delivered",
+    "scenario": "Haal alle reviews op van game 'xyz-789' geschreven door reviewer 'Vinnie'.",
+    "correctUri": "/games/xyz-789/reviews?reviewer=Vinnie",
     "acceptAlternatives": [],
-    "hints": ["Hiërarchie voor de relatie", "Query parameter voor de filter"],
+    "hints": ["Reviews zijn een sub-resource van games", "Reviewer is een filter via query parameter"],
     "rule": "Combinatie van hiërarchie en query parameters",
-    "explanation": "Relatie via pad, filter via query: /customers/cust-99/orders?status=delivered"
+    "explanation": "Geneste resource met filter: /games/xyz-789/reviews?reviewer=Vinnie"
   },
   {
     "id": 13,
@@ -132,12 +132,12 @@
   {
     "id": 14,
     "difficulty": "advanced",
-    "scenario": "Ontwerp een URI voor het ophalen van alle sensoren op verdieping 2, kamer 5 in een slim gebouw.",
-    "correctUri": "/floors/2/rooms/5/sensors",
-    "acceptAlternatives": ["/buildings/1/floors/2/rooms/5/sensors"],
-    "hints": ["Gebruik meerdere niveaus van hiërarchie", "Verdieping → kamer → sensoren"],
-    "rule": "Gebruik hiërarchie voor het weergeven van relaties",
-    "explanation": "Diepe hiërarchie: /floors/2/rooms/5/sensors"
+    "scenario": "Zoek games met de tekst 'mario' in de titel, van developer 'dev-789'.",
+    "correctUri": "/games?search=mario&developerId=dev-789",
+    "acceptAlternatives": ["/games?developerId=dev-789&search=mario"],
+    "hints": ["Beide zijn query parameters op /games", "Zoeken doe je met search"],
+    "rule": "Gebruik query parameters voor filtering",
+    "explanation": "Zoeken en filteren combineer je: /games?search=mario&developerId=dev-789"
   },
   {
     "id": 15,
